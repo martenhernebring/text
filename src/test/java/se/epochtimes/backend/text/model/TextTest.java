@@ -1,15 +1,14 @@
 package se.epochtimes.backend.text.model;
 
 import org.junit.jupiter.api.Test;
-import se.epochtimes.backend.text.repository.TextSingleton;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TextTest {
+public class TextTest extends JpaModelRequirementTest {
 
-  private final List<String> sentences = TextSingleton.getInstance();
+  private final List<String> sentences = ArticleElementSingelton.getInstance();
 
   @Test
   void addAllSentencesInText() {
@@ -29,5 +28,15 @@ public class TextTest {
     assertFalse(Character.isLetter(ending.charAt(ending.length() - 1)));
     assertFalse(Character.isWhitespace(ending.charAt(ending.length() - 1)));
     assertTrue(Character.isLetter(ending.charAt(ending.length() - 2)));
+  }
+
+  @Test
+  void hasEmptyConstructor() {
+    new Text();
+  }
+
+  @Test
+  void modelJpaHasTwoConstructors() {
+    assertModelClassHasTwoConstructors(Text.class);
   }
 }

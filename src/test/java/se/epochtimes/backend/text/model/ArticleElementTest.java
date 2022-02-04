@@ -1,16 +1,15 @@
 package se.epochtimes.backend.text.model;
 
 import org.junit.jupiter.api.Test;
-import se.epochtimes.backend.text.repository.TextSingleton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SentenceTest {
+public class ArticleElementTest {
 
-  private static final String FIRST = TextSingleton.getInstance().get(0);
+  private static final String FIRST = ArticleElementSingelton.getInstance().get(0);
 
   @Test
   void firstSentenceIsInSwedish() {
@@ -53,7 +52,7 @@ public class SentenceTest {
   void addSecondSentence() {
     final List<String> text = new ArrayList<>();
     text.add(FIRST);
-    text.add(TextSingleton.getInstance().get(1));
+    text.add(ArticleElementSingelton.getInstance().get(1));
     assertEquals(2, text.size());
   }
 }

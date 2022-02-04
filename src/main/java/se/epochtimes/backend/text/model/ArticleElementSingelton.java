@@ -1,10 +1,10 @@
-package se.epochtimes.backend.text.repository;
+package se.epochtimes.backend.text.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TextSingleton {
+public class ArticleElementSingelton {
 
   private static final String FIRST = "Många företag planerar att höja priserna.";
   private static final String SECOND = "Två av tre företag i industrin och drygt hälften av " +
@@ -31,7 +31,7 @@ public class TextSingleton {
 
   private final static List<String> sentences;
 
-  private TextSingleton(){}
+  private ArticleElementSingelton(){}
 
   static{
     sentences = new ArrayList<>();
