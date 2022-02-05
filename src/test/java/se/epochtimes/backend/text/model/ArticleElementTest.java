@@ -9,21 +9,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ArticleElementTest {
 
-  private static final String FIRST = ArticleElementSingelton.getInstance().get(0);
+  private static final String FIRST = ParagraphSingleton.getInstance().get(0);
 
   @Test
   void firstSentenceIsInSwedish() {
-    assertEquals("Många företag planerar att höja priserna.", FIRST);
+    assertEquals("  Många företag planerar att höja priserna. Två av tre företag i industrin och drygt " +
+      "hälften av tjänsteföretagen räknar med att ta ut högre priser av sina kunder. Det visar " +
+      "en undersökning som Swedbank har gjort bland inköpschefer och i tjänstesektorn.", FIRST);
   }
 
   @Test
-  void firstLetterIsUpperCase() {
-    assertTrue(Character.isUpperCase(FIRST.charAt(0)));
+  void firstCharacterIsSpace() {
+    assertTrue(Character.isSpaceChar(FIRST.charAt(0)));
   }
 
   @Test
-  void secondCharacterIsLowerCase() {
-    assertTrue(Character.isLowerCase(FIRST.charAt(1)));
+  void secondCharacterIsSpace() {
+    assertTrue(Character.isSpaceChar(FIRST.charAt(1)));
+  }
+
+  @Test
+  void thirdCharacterIsUpperCase() {
+    assertTrue(Character.isUpperCase(FIRST.charAt(2)));
+  }
+
+  @Test
+  void fourthCharacterIsLowerCase() {
+    assertTrue(Character.isLowerCase(FIRST.charAt(3)));
   }
 
   @Test
@@ -37,8 +49,8 @@ public class ArticleElementTest {
   }
 
   @Test
-  void secondToLastCharacterIsLetter() {
-    assertTrue(Character.isLetter(FIRST.charAt(FIRST.length() - 2)));
+  void secondToLastCharacterIsLowerCase() {
+    assertTrue(Character.isLowerCase(FIRST.charAt(FIRST.length() - 2)));
   }
 
   @Test
@@ -52,7 +64,7 @@ public class ArticleElementTest {
   void addSecondSentence() {
     final List<String> text = new ArrayList<>();
     text.add(FIRST);
-    text.add(ArticleElementSingelton.getInstance().get(1));
+    text.add(ParagraphSingleton.getInstance().get(1));
     assertEquals(2, text.size());
   }
 }

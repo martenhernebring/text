@@ -7,12 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.ArticleElementSingelton;
+import se.epochtimes.backend.text.model.ParagraphSingleton;
 import se.epochtimes.backend.text.model.Subject;
 import se.epochtimes.backend.text.model.Text;
 import se.epochtimes.backend.text.repository.TextRepository;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -30,13 +30,13 @@ public class MockServiceTest {
 
   @BeforeEach
   void setUp() {
-    text = new Text(Subject.EKONOMI, ArticleElementSingelton.getInstance());
+    text = new Text(Subject.EKONOMI, ParagraphSingleton.getInstance());
   }
 
   @Test
-  void getAllPreviousThatWasOne() {
-    when(textServiceTest.getAllPreviousTexts()).thenReturn(List.of(new TextDTO(text)));
-    assertEquals(1, textServiceTest.getAllPreviousTexts().size());
+  void getAllPreviousThatWasZero() {
+    when(textServiceTest.getAllPreviousTexts()).thenReturn(new ArrayList<>());
+    assertEquals(0, textServiceTest.getAllPreviousTexts().size());
   }
 
   @Test
@@ -44,10 +44,11 @@ public class MockServiceTest {
     long id = 1L;
     text.setId(id);
     TextDTO dto = new TextDTO(text);
-    textServiceTest.add(dto);
-    verify(mockedTextRepository, times(1)).save(any(Text.class));
+    when(mockedTextRepository.save(any(Text.class))).thenReturn(text);
+    textServiceTest.process(dto);
     when(mockedTextRepository.getById(id)).thenReturn(text);
     TextDTO mockedStored = textServiceTest.get(id);
     assertEquals(dto, mockedStored);
+    assertEquals(dto.hashCode(), mockedStored.hashCode());
   }
 }

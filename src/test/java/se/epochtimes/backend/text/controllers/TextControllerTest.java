@@ -5,18 +5,29 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.ArticleElementSingelton;
 import se.epochtimes.backend.text.model.Subject;
+import se.epochtimes.backend.text.services.TextService;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @WebMvcTest
 @AutoConfigureMockMvc
 public class TextControllerTest {
+  @MockBean
+  private TextService mockedService;
+
   @Autowired
   private MockMvc mockMvc;
 
@@ -25,13 +36,36 @@ public class TextControllerTest {
 
   private static final String BASE_URL = "/v1/texts";
 
+  private TextDTO dto = new TextDTO(Subject.EKONOMI, List.of("sentence1", "sentence2"));
+
   @Test
-  void postArticle() throws Exception {
-    TextDTO textDTO = new TextDTO(Subject.EKONOMI, ArticleElementSingelton.getInstance());
-    this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-      .content(objectMapper.writeValueAsString(textDTO)).contentType(MediaType.APPLICATION_JSON))
+  void getAllPrevious() throws Exception {
+    var dtos = List.of(dto);
+    when(mockedService.getAllPreviousTexts()).thenReturn(dtos);
+    MvcResult mvcResult = this.mockMvc
+      .perform(MockMvcRequestBuilders.get(BASE_URL)
+        .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
       .andReturn();
+
+    String actualResponseJson = mvcResult.getResponse().getContentAsString();
+    String expectedResultJson = objectMapper.writeValueAsString(dtos);
+    assertEquals(expectedResultJson, actualResponseJson);
+  }
+
+  @Test
+  void postArticle() throws Exception {
+    when(mockedService.process(any(TextDTO.class))).thenReturn(dto);
+
+    String expectedResultJson = objectMapper.writeValueAsString(dto);
+    String actualResponseJson = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL)
+      .content(expectedResultJson).contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
+
+    assertEquals(expectedResultJson, actualResponseJson);
   }
 
 }

@@ -6,20 +6,22 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TextTest extends JpaModelRequirementTest {
+public class TextTest {
 
-  private final List<String> sentences = ArticleElementSingelton.getInstance();
+  private final List<String> sentences = ParagraphSingleton.getInstance();
 
   @Test
   void addAllSentencesInText() {
-    assertEquals(10, sentences.size());
+    assertEquals(5, sentences.size());
   }
 
   @Test
   void startIsASentence() {
     final String start = sentences.get(0);
-    assertTrue(Character.isUpperCase(start.charAt(0)));
-    assertTrue(Character.isLowerCase(start.charAt(1)));
+    assertTrue(Character.isSpaceChar(start.charAt(0)));
+    assertTrue(Character.isSpaceChar(start.charAt(1)));
+    assertTrue(Character.isUpperCase(start.charAt(2)));
+    assertTrue(Character.isLowerCase(start.charAt(3)));
   }
 
   @Test
@@ -33,10 +35,5 @@ public class TextTest extends JpaModelRequirementTest {
   @Test
   void hasEmptyConstructor() {
     new Text();
-  }
-
-  @Test
-  void modelJpaHasTwoConstructors() {
-    assertModelClassHasTwoConstructors(Text.class);
   }
 }

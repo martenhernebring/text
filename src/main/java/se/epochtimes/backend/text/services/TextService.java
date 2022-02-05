@@ -21,8 +21,9 @@ public class TextService {
     return textRepository.findAll().stream().map(TextDTO::new).collect(Collectors.toList());
   }
 
-  public void add(TextDTO text) {
-    textRepository.save(new Text(text));
+  public TextDTO process(TextDTO draft) {
+    Text processed = textRepository.save(new Text(draft));
+    return new TextDTO(processed);
   }
 
   public TextDTO get(long id) {

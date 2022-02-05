@@ -18,8 +18,8 @@ public class Text {
   private List<String> article;
 
   public Text(TextDTO text) {
-    this.subject = text.subject();
-    this.article = text.article();
+    this.subject = text.getSubject();
+    this.article = text.getArticle();
   }
 
   public Long getId() {
