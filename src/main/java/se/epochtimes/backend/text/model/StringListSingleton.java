@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ParagraphSingleton {
+public class StringListSingleton {
 
   private static final String FIRST =
     "  Många företag planerar att höja priserna. Två av tre företag i industrin och drygt " +
@@ -29,7 +29,7 @@ public class ParagraphSingleton {
 
   private final static List<String> paragraphs;
 
-  private ParagraphSingleton(){}
+  private StringListSingleton(){}
 
   static{
     paragraphs = new ArrayList<>();

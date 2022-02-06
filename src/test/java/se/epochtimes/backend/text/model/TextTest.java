@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TextTest {
 
-  private final List<String> sentences = ParagraphSingleton.getInstance();
+  private final List<String> sentences = StringListSingleton.getInstance();
 
   @Test
   void addAllSentencesInText() {

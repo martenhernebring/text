@@ -44,4 +44,9 @@ public class Text {
   public List<String> getArticle() {
     return article;
   }
+
+  @Override
+  public String toString() {
+    return article.toString();
+  }
 }

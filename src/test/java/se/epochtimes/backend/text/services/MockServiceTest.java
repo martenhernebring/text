@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.ParagraphSingleton;
+import se.epochtimes.backend.text.model.StringListSingleton;
 import se.epochtimes.backend.text.model.Subject;
 import se.epochtimes.backend.text.model.Text;
 import se.epochtimes.backend.text.repository.TextRepository;
@@ -30,7 +30,7 @@ public class MockServiceTest {
 
   @BeforeEach
   void setUp() {
-    text = new Text(Subject.EKONOMI, ParagraphSingleton.getInstance());
+    text = new Text(Subject.EKONOMI, StringListSingleton.getInstance());
   }
 
   @Test
@@ -51,4 +51,5 @@ public class MockServiceTest {
     assertEquals(dto, mockedStored);
     assertEquals(dto.hashCode(), mockedStored.hashCode());
   }
+
 }

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ArticleElementTest {
 
-  private static final String FIRST = ParagraphSingleton.getInstance().get(0);
+  private static final String FIRST = StringListSingleton.getInstance().get(0);
 
   @Test
   void firstSentenceIsInSwedish() {
@@ -64,7 +64,7 @@ public class ArticleElementTest {
   void addSecondSentence() {
     final List<String> text = new ArrayList<>();
     text.add(FIRST);
-    text.add(ParagraphSingleton.getInstance().get(1));
+    text.add(StringListSingleton.getInstance().get(1));
     assertEquals(2, text.size());
   }
 }

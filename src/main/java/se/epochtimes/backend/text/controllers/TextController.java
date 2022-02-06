@@ -40,7 +40,7 @@ public class TextController {
 
   /**
    * @return Newspaper formatted text
-   * @param unprocessedText Newspaper article draft
+   * @param unprocessedText Newspaper paragraph draft
    */
   @Operation(summary = "Register new text.")
   @ApiResponses(value = {
