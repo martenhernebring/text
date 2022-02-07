@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.is;
-import static se.epochtimes.backend.text.model.Preamble.NL;
-import static se.epochtimes.backend.text.model.Preamble.wrap;
+import static se.epochtimes.backend.text.model.WordWrapper.NL;
 
-public class PreambleTest {
+public class WordWrapperTest {
 
   private String output;
 
   private void insert(String insert) {
-    output = wrap(insert).build().getParagraph();
+    WordWrapper ww = new WordWrapper(insert);
+    output = ww.wrap();
   }
 
   @Test
@@ -87,9 +87,20 @@ public class PreambleTest {
 
   @Test
   @Disabled
+  void veryLongWordShouldBreakItself() {
+    insert("gravmonumentsindustrifabrikationsprodukterna");
+    assertThat(output, is("gravmonumentsindustri-" + NL + "fabrikationsprodukterna"));
+  }
+
+  //långt ord på slutet
+
+  @Test
+  @Disabled
   void wrapParagraphThreeTimesWithFifteenWords() {
     insert(unprocessPreamble);
     assertThat(output, is(expectedPreamble));
   }
+
+  //Smallest word to cut: 7
 
 }
