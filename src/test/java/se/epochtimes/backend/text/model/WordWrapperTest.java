@@ -86,13 +86,16 @@ public class WordWrapperTest {
   }
 
   @Test
-  @Disabled
   void veryLongWordShouldBreakItself() {
     insert("gravmonumentsindustrifabrikationsprodukterna");
-    assertThat(output, is("gravmonumentsindustri-" + NL + "fabrikationsprodukterna"));
+    assertThat(output, is("gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
   }
 
-  //långt ord på slutet
+  @Test
+  void veryLongWordAtTheEnd() {
+    insert("trappa ned den särskilda insats gravmonumentsindustrifabrikationsprodukterna");
+    assertThat(output, is("trappa ned den särskilda insats" + NL + "gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
+  }
 
   @Test
   @Disabled

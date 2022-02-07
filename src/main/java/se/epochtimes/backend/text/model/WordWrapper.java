@@ -5,10 +5,14 @@ import java.util.Objects;
 public class WordWrapper {
 
   public static final String NL = System.lineSeparator();
-  private static final int MAX = 31;
+  private static final int MAX = 32;
+
   private final String raw;
+
   private final StringBuilder sb = new StringBuilder();
   private int lineWidth;
+  private String word;
+  private int wordLength;
 
   public WordWrapper(String raw) {
     this.raw = raw;
@@ -30,28 +34,36 @@ public class WordWrapper {
   }
 
   private void createLine(String word) {
-    addWhiteSpace(word.length());
-    addWord(word);
+    this.word = word;
+    this.wordLength = word.length();
+    addWhiteSpace();
+    addWord();
   }
 
-  private void addWhiteSpace(int wl) {
-    lineWidth += wl + 1;
+  private void addWhiteSpace() {
+    lineWidth += wordLength + 1;
     if(lineWidth > MAX) {
       sb.append(NL);
-      lineWidth = wl;
+      lineWidth = wordLength;
     } else {
       sb.append(" ");
     }
   }
 
-  private void addWord(String word) {
+  private void addWord() {
     int wl = word.length();
     if(wl <= MAX) {
       sb.append(word);
     } else {
-      sb.append(word, 0, wl /2);
-      sb.append(NL);
-      sb.append(word, wl /2, wl);
+      breakWord();
     }
+  }
+
+  private void breakWord() {
+    int wl = word.length();
+    sb.append(word, 0, wl /2);
+    sb.append("-");
+    sb.append(NL);
+    sb.append(word, wl /2, wl);
   }
 }
