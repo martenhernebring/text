@@ -1,8 +1,5 @@
 package se.epochtimes.backend.text.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class Preamble {
@@ -31,21 +28,19 @@ public class Preamble {
         return "";
       int max = 31;
       String[] words = article.split("\\s+");
-      int length = words.length;
-      int i = length;
-      int width = 0;
-      StringBuilder sb = new StringBuilder("");
-      while(i > 0) {
-        String w = words[length - i];
-        width += w.length() + 1;
+      StringBuilder sb = new StringBuilder();
+      int l = words.length;
+      for(int i = l, width = 0; i > 0; i--) {
+        String w = words[l - i];
+        int wl = w.length();
+        width += wl + 1;
         if(width > max) {
           sb.append(NL);
-          width = 0;
+          width = wl;
         } else {
           sb.append(" ");
         }
         sb.append(w);
-        i--;
       }
       return sb.toString().trim();
     }

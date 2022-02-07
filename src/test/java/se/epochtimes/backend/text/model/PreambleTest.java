@@ -30,6 +30,12 @@ public class PreambleTest {
   }
 
   @Test
+  void sendEmptyIfWhiteSpace() {
+    insert(" ");
+    assertThat(output, is(""));
+  }
+
+  @Test
   void sameShortIfShort() {
     insert("ab");
     assertThat(output, is("ab"));
@@ -55,16 +61,35 @@ public class PreambleTest {
     assertThat(output, is("opinionsundersökning från" + NL + "SvD/GP/Sifo."));
   }
 
+  String unprocessPreamble =
+    "Polisen kommer under veckan trappa ned den särskilda insats som inleddes " +
+      "efter att det inkommit ett 20-tal observationer av drönare runt om i " +
+      "Sverige. Bland annat observerades drönare över kärnkraftverk.";
+
+  String expectedPreamble =
+    "Polisen kommer under veckan" + NL + "trappa ned den särskilda insats" + NL +
+      "som inleddes efter att det" + NL + "inkommit ett 20-tal observa-" + NL +
+      "tioner av drönare runt om i Sve-" + NL + "rige. Bland annat observerades"
+    + NL + "drönare över kärnkraftverk.";
+
   @Test
   void wrapParagraphIfFourWordsTooWide() {
-    insert("Polisen kommer under veckan trappa");
+    insert(unprocessPreamble.substring(0, 34));
     assertThat(output, is("Polisen kommer under veckan" + NL + "trappa"));
   }
 
   @Test
-  void sendEmptyIfWhiteSpace() {
-    insert(" ");
-    assertThat(output, is(""));
+  void wrapParagraphTwoTimesWithTenWords() {
+    insert(unprocessPreamble.substring(0, 63));
+    assertThat(output, is("Polisen kommer under veckan" + NL +
+      "trappa ned den särskilda insats" + NL + "som"));
+  }
+
+  @Test
+  @Disabled
+  void wrapParagraphThreeTimesWithFifteenWords() {
+    insert(unprocessPreamble);
+    assertThat(output, is(expectedPreamble));
   }
 
 }
