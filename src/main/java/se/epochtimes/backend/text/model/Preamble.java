@@ -1,5 +1,8 @@
 package se.epochtimes.backend.text.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class Preamble {
@@ -27,44 +30,24 @@ public class Preamble {
       if (Objects.equals(article, null))
         return "";
       int max = 31;
-      
-      if (article.length() > max) {
-        String[] words = article.split("\\s+");
-        String w = words[0];
-        int width = w.length();
-        StringBuilder sb = new StringBuilder(words[0]);
-        w = words[1];
+      String[] words = article.split("\\s+");
+      int length = words.length;
+      int i = length;
+      int width = 0;
+      StringBuilder sb = new StringBuilder("");
+      while(i > 0) {
+        String w = words[length - i];
         width += w.length() + 1;
-        if (width > max) {
+        if(width > max) {
           sb.append(NL);
-          sb.append(words[1]);
-          return sb.toString().trim();
-        }
-        sb.append(" ");
-        sb.append(words[1]);
-        w = words[2];
-        width += w.length() + 1;
-        if (width > max) {
-          sb.append(NL);
-          sb.append(words[2]);
-          return sb.toString().trim();
-        }
-        sb.append(" ");
-        sb.append(words[2]);
-        w = words[3];
-        width += w.length() + 1;
-        if (width > max) {
-          sb.append(NL);
-          sb.append(words[3]);
+          width = 0;
         } else {
           sb.append(" ");
-          sb.append(words[3]);
-          sb.append(NL);
-          sb.append(words[4]);
         }
-        return sb.toString().trim();
-      } else
-        return article.trim();
+        sb.append(w);
+        i--;
+      }
+      return sb.toString().trim();
     }
 
     public Preamble build() {

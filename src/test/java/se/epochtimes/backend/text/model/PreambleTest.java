@@ -24,9 +24,9 @@ public class PreambleTest {
   }
 
   @Test
-  void sameLetterIfBigLetter() {
-    insert("A");
-    assertThat(output, is("A"));
+  void sameLetterIfLetter() {
+    insert("a");
+    assertThat(output, is("a"));
   }
 
   @Test
@@ -67,5 +67,4 @@ public class PreambleTest {
     assertThat(output, is(""));
   }
 
-  //TODO " "
 }
