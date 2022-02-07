@@ -81,8 +81,8 @@ public class WordWrapperTest {
   @Test
   void wrapParagraphTwoTimesWithTenWords() {
     insert(unprocessPreamble.substring(0, 63));
-    assertThat(output, is("Polisen kommer under veckan" + NL +
-      "trappa ned den särskilda insats" + NL + "som"));
+    assertThat(output, is("Polisen kommer under veckan tra-" + NL +
+      "ppa ned den särskilda insats som"));
   }
 
   @Test
@@ -98,12 +98,19 @@ public class WordWrapperTest {
   }
 
   @Test
+  void breakAtEnd() {
+    insert("inkommit ett 20-tal observationer");
+    assertThat(output, is("inkommit ett 20-tal" + NL + "observationer"));
+  }
+
+  @Test
   @Disabled
   void wrapParagraphThreeTimesWithFifteenWords() {
     insert(unprocessPreamble);
     assertThat(output, is(expectedPreamble));
   }
 
+  //Testa tre långa ord
   //Smallest word to cut: 7
 
 }
