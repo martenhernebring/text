@@ -34,7 +34,7 @@ public class WordWrapper {
 
   private void addWhiteSpace() {
     if(!word.isBig()) {
-      if (!isBisectable() & isLong()) {
+      if (isNotBisectable() & isLong()) {
         sb.append(NL);
         lineWidth = word.getLength();
       } else {
@@ -46,7 +46,7 @@ public class WordWrapper {
   }
 
   private void addWord() {
-    if (!word.isBig() && !isBisectable()) {
+    if (!word.isBig() && isNotBisectable()) {
       sb.append(word);
     } else {
       if(word.isBig() && isHuge()) {
@@ -77,7 +77,7 @@ public class WordWrapper {
     return lineWidth - word.getLength()/2 > MAX;
   }
 
-  private boolean isBisectable() {
-    return isLong() && words.length > 5 && (!isLast(word.getIndex()) || word.isBig());
+  private boolean isNotBisectable() {
+    return !isLong() || words.length <= 5 || (isLast(word.getIndex()) && !word.isBig());
   }
 }
