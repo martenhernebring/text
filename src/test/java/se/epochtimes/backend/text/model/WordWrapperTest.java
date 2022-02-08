@@ -103,7 +103,6 @@ public class WordWrapperTest {
   }
 
   @Test
-  @Disabled
   void veryLongLeftOver() {
     insert("trappa gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("trappa gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));

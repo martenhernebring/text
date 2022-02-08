@@ -20,38 +20,43 @@ public class WordWrapper {
   public String wrapWords() {
     final List<String> wordList = new ArrayList<>(List.of(words));
     sb = new StringBuilder();
-    for (int i = 0; i < wordList.size(); i++) {
+    int highestIndex = wordList.size() - 1;
+    for (int i = 0; i <= highestIndex; i++) {
       String word = wordList.get(i);
       if (!word.isEmpty()) {
-        boolean notLast = i != wordList.size() - 1;
-        append(word, notLast);
+        boolean last = (i == highestIndex);
+        append(word, last);
       }
     }
     return sb.toString().trim();
   }
 
-  private void append(String word, boolean notLast) {
+  private void append(String word, boolean last) {
     this.wordLength = word.length();
     this.lineWidth += wordLength + 1;
     boolean longLine = lineWidth > MAX;
-    boolean breakableWord = longLine && wordLength > 5 && notLast;
-    addWhiteSpace(longLine, breakableWord);
-    add(word, breakableWord);
+    boolean hugeWord = wordLength > MAX;
+    boolean breakableWord = longLine && wordLength > 5 && (!last || hugeWord);
+    addWhiteSpace(longLine, breakableWord, hugeWord);
+    add(word, breakableWord, hugeWord);
   }
 
-  private void addWhiteSpace(boolean longLine, boolean breakableWord) {
-    if (!breakableWord & longLine) {
+  private void addWhiteSpace(boolean longLine, boolean breakableWord, boolean hugeWord) {
+    if (!breakableWord & longLine & !hugeWord) {
       sb.append(NL);
       lineWidth = wordLength;
-    } else {
+    } else if (!hugeWord || (lineWidth -wordLength/2) < MAX){
       sb.append(" ");
     }
   }
 
-  private void add(String word, boolean breakableWord) {
-    if (wordLength <= MAX && !breakableWord) {
+  private void add(String word, boolean breakableWord, boolean hugeWord) {
+    if (!hugeWord && !breakableWord) {
       sb.append(word);
     } else {
+      if(hugeWord && !((lineWidth -wordLength/2) < MAX)) {
+        sb.append(NL);
+      }
       bisect(word);
     }
   }
