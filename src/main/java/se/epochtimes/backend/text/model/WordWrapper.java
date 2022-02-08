@@ -33,28 +33,33 @@ public class WordWrapper {
 
   private void append(String word, boolean last) {
     this.wordLength = word.length();
+    boolean bigWord = wordLength > MAX;
+    boolean hugeLine = (lineWidth + wordLength/2) > MAX;
     this.lineWidth += wordLength + 1;
     boolean longLine = lineWidth > MAX;
-    boolean hugeWord = wordLength > MAX;
-    boolean breakableWord = longLine && wordLength > 5 && (!last || hugeWord);
-    addWhiteSpace(longLine, breakableWord, hugeWord);
-    add(word, breakableWord, hugeWord);
+    boolean breakableWord = longLine && wordLength > 5 && (!last || bigWord);
+    addWhiteSpace(longLine, breakableWord, bigWord, hugeLine);
+    add(word, breakableWord, bigWord, hugeLine);
   }
 
-  private void addWhiteSpace(boolean longLine, boolean breakableWord, boolean hugeWord) {
-    if (!breakableWord & longLine & !hugeWord) {
-      sb.append(NL);
-      lineWidth = wordLength;
-    } else if (!hugeWord || (lineWidth -wordLength/2) < MAX){
+  private void addWhiteSpace(boolean longLine, boolean breakableWord, boolean hugeWord, boolean hugeLine) {
+    if(!hugeWord) {
+      if (!breakableWord & longLine) {
+        sb.append(NL);
+        lineWidth = wordLength;
+      } else {
+        sb.append(" ");
+      }
+    } else if(!hugeLine){
       sb.append(" ");
     }
   }
 
-  private void add(String word, boolean breakableWord, boolean hugeWord) {
+  private void add(String word, boolean breakableWord, boolean hugeWord, boolean hugeLine) {
     if (!hugeWord && !breakableWord) {
       sb.append(word);
     } else {
-      if(hugeWord && !((lineWidth -wordLength/2) < MAX)) {
+      if(hugeWord && hugeLine) {
         sb.append(NL);
       }
       bisect(word);
