@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static se.epochtimes.backend.text.model.WordWrapper.NL;
 
 public class WordWrapperTest {
@@ -14,13 +14,12 @@ public class WordWrapperTest {
 
   private void insert(String insert) {
     WordWrapper ww = new WordWrapper(insert);
-    output = ww.wrap();
+    output = ww.wrapWords();
   }
 
   @Test
-  void emptyStringWhenNull() {
-    insert(null);
-    assertThat(output, is(emptyString()));
+  void throwsExceptionWhenNull() {
+    assertThrows(NullPointerException.class, () -> insert(null));
   }
 
   @Test
@@ -98,9 +97,16 @@ public class WordWrapperTest {
   }
 
   @Test
-  void breakAtEnd() {
+  void breakLineAtEnd() {
     insert("inkommit ett 20-tal observationer");
     assertThat(output, is("inkommit ett 20-tal" + NL + "observationer"));
+  }
+
+  @Test
+  @Disabled
+  void veryLongLeftOver() {
+    insert("trappa gravmonumentsindustrifabrikationsprodukterna");
+    assertThat(output, is("trappa gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
   }
 
   @Test
