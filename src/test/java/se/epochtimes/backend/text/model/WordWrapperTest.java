@@ -121,7 +121,12 @@ public class WordWrapperTest {
       + NL + "annat observerades drönare över" + NL + "kärnkraftverk."));
   }
 
+  @Test
+  void longShortLongWords() {
+    insert("storslalomtävlingen i Kronplatz");
+    assertThat(output, is("storslalomtävlingen i Kronplatz"));
+  }
+
   //Testa tre långa ord
-  //Smallest word to cut: 7
 
 }
