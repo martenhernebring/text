@@ -87,7 +87,8 @@ public class WordWrapperTest {
   @Test
   void veryLongWordAtTheEnd() {
     insert("trappa ned den särskilda insats gravmonumentsindustrifabrikationsprodukterna");
-    assertThat(output, is("trappa ned den särskilda insats" + NL + "gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
+    assertThat(output, is("trappa ned den särskilda insats" + NL +
+      "gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
   }
 
   @Test
@@ -103,10 +104,21 @@ public class WordWrapperTest {
   }
 
   @Test
-  @Disabled
-  void wrapParagraphThreeTimesWithFifteenWords() {
+  void wrapParagraphFourTimesWithNineteenWords() {
+    insert("Polisen kommer under veckan trappa ned den särskilda insats som inleddes efter att "
+      + "det inkommit ett 20-tal observationer av drönare");
+    assertThat(output, is("Polisen kommer under veckan tra-" + NL +
+      "ppa ned den särskilda insats som inle-" + NL + "ddes efter att det inkommit ett 20-"
+      + NL + "tal observationer av drönare"));
+  }
+
+  @Test
+  void wrapParagraphSixTimesWithTwentyNineWords() {
     insert(unprocessPreamble);
-    assertThat(output, is("Polisen kommer under veckan tra-" + NL + "ppa ned den särskilda insats som inle-" + NL + "ddes efter att det inkommit ett 20-" + NL + "tal observationer av drönare" +NL + "runt om i Sverige. Bland annat observ-" + NL + "erades drönare över kärnkraftverk."));
+    assertThat(output, is("Polisen kommer under veckan tra-" + NL +
+      "ppa ned den särskilda insats som inle-" + NL + "ddes efter att det inkommit ett 20-"
+      + NL + "tal observationer av drönare" + NL + "runt om i Sverige. Bland annat observ-"
+      + NL + "erades drönare över kärnkraftverk."));
   }
 
   //Testa tre långa ord

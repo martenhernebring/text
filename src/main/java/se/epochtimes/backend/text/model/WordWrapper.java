@@ -57,8 +57,10 @@ public class WordWrapper {
   }
 
   private void bisect() {
-    sb.append(word.getFirstHalf());
-    sb.append("-");
+    String firstHalf = word.getFirstHalf();
+    sb.append(firstHalf);
+    if(firstHalf.charAt(firstHalf.length() - 1) != '-')
+      sb.append("-");
     sb.append(NL);
     String leftOver = word.getSecondHalf();
     sb.append(leftOver);
@@ -78,6 +80,6 @@ public class WordWrapper {
   }
 
   private boolean isNotBisectable() {
-    return !isLong() || words.length <= 5 || (isLast(word.getIndex()) && !word.isBig());
+    return !isLong() || word.getLength() <= 5 || (isLast(word.getIndex()) && !word.isBig());
   }
 }
