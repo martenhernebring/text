@@ -80,6 +80,6 @@ public class WordWrapper {
   }
 
   private boolean isNotBisectable() {
-    return !isLong() || word.getLength() <= 5 || (isLast(word.getIndex()) && !word.isBig());
+    return !isLong() || word.getLength() <= 7 || (isLast(word.getIndex()) && !word.isBig());
   }
 }

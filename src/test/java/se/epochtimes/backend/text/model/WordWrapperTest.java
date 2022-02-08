@@ -74,8 +74,8 @@ public class WordWrapperTest {
   @Test
   void wrapParagraphTwoTimesWithTenWords() {
     insert(unprocessPreamble.substring(0, 63));
-    assertThat(output, is("Polisen kommer under veckan tra-" + NL +
-      "ppa ned den särskilda insats som"));
+    assertThat(output, is("Polisen kommer under veckan" + NL +
+      "trappa ned den särskilda insats" + NL + "som"));
   }
 
   @Test
@@ -107,18 +107,18 @@ public class WordWrapperTest {
   void wrapParagraphFourTimesWithNineteenWords() {
     insert("Polisen kommer under veckan trappa ned den särskilda insats som inleddes efter att "
       + "det inkommit ett 20-tal observationer av drönare");
-    assertThat(output, is("Polisen kommer under veckan tra-" + NL +
-      "ppa ned den särskilda insats som inle-" + NL + "ddes efter att det inkommit ett 20-"
-      + NL + "tal observationer av drönare"));
+    assertThat(output, is("Polisen kommer under veckan" + NL +
+      "trappa ned den särskilda insats" + NL + "som inleddes efter att det inko-" + NL +
+      "mmit ett 20-tal observationer av" + NL + "drönare"));
   }
 
   @Test
   void wrapParagraphSixTimesWithTwentyNineWords() {
     insert(unprocessPreamble);
-    assertThat(output, is("Polisen kommer under veckan tra-" + NL +
-      "ppa ned den särskilda insats som inle-" + NL + "ddes efter att det inkommit ett 20-"
-      + NL + "tal observationer av drönare" + NL + "runt om i Sverige. Bland annat observ-"
-      + NL + "erades drönare över kärnkraftverk."));
+    assertThat(output, is("Polisen kommer under veckan" + NL +
+      "trappa ned den särskilda insats" + NL + "som inleddes efter att det inko-"
+      + NL + "mmit ett 20-tal observationer av" + NL + "drönare runt om i Sverige. Bland"
+      + NL + "annat observerades drönare över" + NL + "kärnkraftverk."));
   }
 
   //Testa tre långa ord
