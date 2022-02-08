@@ -23,12 +23,16 @@ public class Word {
     return index;
   }
 
-  String getWord() {
-    return word;
-  }
-
   boolean isBig() {
     return getLength() > MAX;
+  }
+
+  String getFirstHalf() {
+    return word.substring(0, getLength() / 2);
+  }
+
+  String getSecondHalf() {
+    return word.substring(getLength() / 2);
   }
 
   @Override

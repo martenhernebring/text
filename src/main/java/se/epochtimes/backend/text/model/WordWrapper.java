@@ -57,10 +57,10 @@ public class WordWrapper {
   }
 
   private void bisect() {
-    sb.append(word.getWord(), 0, word.getLength() / 2);
+    sb.append(word.getFirstHalf());
     sb.append("-");
     sb.append(NL);
-    String leftOver = word.getWord().substring(word.getLength() / 2);
+    String leftOver = word.getSecondHalf();
     sb.append(leftOver);
     lineWidth = leftOver.length();
   }
