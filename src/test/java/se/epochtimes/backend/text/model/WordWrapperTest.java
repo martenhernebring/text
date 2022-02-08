@@ -65,12 +65,6 @@ public class WordWrapperTest {
       "efter att det inkommit ett 20-tal observationer av drönare runt om i " +
       "Sverige. Bland annat observerades drönare över kärnkraftverk.";
 
-  String expectedPreamble =
-    "Polisen kommer under veckan" + NL + "trappa ned den särskilda insats" + NL +
-      "som inleddes efter att det" + NL + "inkommit ett 20-tal observa-" + NL +
-      "tioner av drönare runt om i Sve-" + NL + "rige. Bland annat observerades"
-    + NL + "drönare över kärnkraftverk.";
-
   @Test
   void wrapParagraphIfFourWordsTooWide() {
     insert(unprocessPreamble.substring(0, 34));
@@ -112,7 +106,7 @@ public class WordWrapperTest {
   @Disabled
   void wrapParagraphThreeTimesWithFifteenWords() {
     insert(unprocessPreamble);
-    assertThat(output, is(expectedPreamble));
+    assertThat(output, is("Polisen kommer under veckan tra-" + NL + "ppa ned den särskilda insats som inle-" + NL + "ddes efter att det inkommit ett 20-" + NL + "tal observationer av drönare" +NL + "runt om i Sverige. Bland annat observ-" + NL + "erades drönare över kärnkraftverk."));
   }
 
   //Testa tre långa ord
