@@ -22,44 +22,34 @@ public class WordWrapper {
     return sb.toString().trim();
   }
 
-  private boolean isLast(int index) {
-    return (index >= words.length - 1);
-  }
-
-  private boolean isLong() {
-    return lineWidth > MAX;
-  }
-
   private void append(Word word) {
     if (word.isEmpty()) {
       return;
     }
     this.word = word;
-    boolean hugeLine = (lineWidth + word.getLength()/2) > MAX;
     this.lineWidth += word.getLength() + 1;
-    boolean breakableWord = isLong() && word.getLength() > 5 && (!isLast(word.getIndex()) || word.isBig());
-    addWhiteSpace(isLong(), breakableWord, word.isBig(), hugeLine);
-    add(word, breakableWord, word.isBig(), hugeLine);
+    addWhiteSpace();
+    addWord();
   }
 
-  private void addWhiteSpace(boolean longLine, boolean breakableWord, boolean hugeWord, boolean hugeLine) {
-    if(!hugeWord) {
-      if (!breakableWord & longLine) {
+  private void addWhiteSpace() {
+    if(!word.isBig()) {
+      if (!isBisectable() & isLong()) {
         sb.append(NL);
         lineWidth = word.getLength();
       } else {
         sb.append(" ");
       }
-    } else if(!hugeLine){
+    } else if(!isHuge()){
       sb.append(" ");
     }
   }
 
-  private void add(Word word, boolean breakableWord, boolean hugeWord, boolean hugeLine) {
-    if (!hugeWord && !breakableWord) {
+  private void addWord() {
+    if (!word.isBig() && !isBisectable()) {
       sb.append(word);
     } else {
-      if(hugeWord && hugeLine) {
+      if(word.isBig() && isHuge()) {
         sb.append(NL);
       }
       bisect();
@@ -73,5 +63,21 @@ public class WordWrapper {
     String leftOver = word.getWord().substring(word.getLength() / 2);
     sb.append(leftOver);
     lineWidth = leftOver.length();
+  }
+
+  private boolean isLast(int index) {
+    return (index >= words.length - 1);
+  }
+
+  private boolean isLong() {
+    return lineWidth > MAX;
+  }
+
+  private boolean isHuge() {
+    return lineWidth - word.getLength()/2 > MAX;
+  }
+
+  private boolean isBisectable() {
+    return isLong() && words.length > 5 && (!isLast(word.getIndex()) || word.isBig());
   }
 }
