@@ -60,7 +60,7 @@ public class WordWrapperTest {
     assertThat(output, is("opinionsundersökning från" + NL + "SvD/GP/Sifo."));
   }
 
-  String unprocessPreamble =
+  final String unprocessPreamble =
     "Polisen kommer under veckan trappa ned den särskilda insats som inleddes " +
       "efter att det inkommit ett 20-tal observationer av drönare runt om i " +
       "Sverige. Bland annat observerades drönare över kärnkraftverk.";
@@ -122,11 +122,11 @@ public class WordWrapperTest {
   }
 
   @Test
-  void longShortLongWords() {
-    insert("storslalomtävlingen i Kronplatz");
-    assertThat(output, is("storslalomtävlingen i Kronplatz"));
+  @Disabled
+  void longArticle() {
+    insert("Det samlade skuldberget hos Kronofogden uppgår till 94 miljarder kronor.");
+    assertThat(output, is("Det samlade skuldberget hos" + NL +
+      "Kronofogden uppgår till 94" + NL + "miljarder kronor."));
   }
-
-  //Testa tre långa ord
 
 }

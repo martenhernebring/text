@@ -12,14 +12,14 @@ public class WordWrapper {
   private Word word;
 
   public WordWrapper(String raw) {
-    this.words = raw.split("\\s+");
+    this.words = raw.trim().split("\\s+");
   }
 
   public String wrapWords() {
     sb = new StringBuilder();
     for (int i = 0; i < words.length; i++)
       append(new Word(words[i], i));
-    return sb.toString().trim();
+    return sb.toString();
   }
 
   private void append(Word word) {
@@ -28,7 +28,9 @@ public class WordWrapper {
     }
     this.word = word;
     this.lineWidth += word.getLength() + 1;
-    addWhiteSpace();
+    if(word.getIndex() > 0) {
+      addWhiteSpace();
+    }
     addWord();
   }
 
@@ -42,6 +44,8 @@ public class WordWrapper {
       }
     } else if(!isHuge()){
       sb.append(" ");
+    } else {
+      sb.append(NL);
     }
   }
 
@@ -49,9 +53,6 @@ public class WordWrapper {
     if (!word.isBig() && isNotBisectable()) {
       sb.append(word);
     } else {
-      if(word.isBig() && isHuge()) {
-        sb.append(NL);
-      }
       bisect();
     }
   }

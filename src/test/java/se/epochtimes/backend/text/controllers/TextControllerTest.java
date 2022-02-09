@@ -36,7 +36,7 @@ public class TextControllerTest {
 
   private static final String BASE_URL = "/v1/texts";
 
-  private TextDTO dto = new TextDTO(Subject.EKONOMI, List.of("sentence1", "sentence2"));
+  private final TextDTO dto = new TextDTO(Subject.EKONOMI, List.of("sentence1", "sentence2"));
 
   @Test
   void getAllPrevious() throws Exception {
