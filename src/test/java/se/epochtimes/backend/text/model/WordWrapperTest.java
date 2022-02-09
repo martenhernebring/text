@@ -12,43 +12,48 @@ public class WordWrapperTest {
 
   private String output;
 
-  private void insert(String insert) {
+  private void defaultInsert(String insert) {
     WordWrapper ww = new WordWrapper(insert, Format.DEFAULT);
+    output = ww.wrapWordsWithBisect();
+  }
+
+  private void paragraphInsert(String insert, int startingSpaces) {
+    WordWrapper ww = new WordWrapper(insert, Format.PARAGRAPH, startingSpaces);
     output = ww.wrapWordsWithBisect();
   }
 
   @Test
   void throwsExceptionWhenNull() {
-    assertThrows(NullPointerException.class, () -> insert(null));
+    assertThrows(NullPointerException.class, () -> defaultInsert(null));
   }
 
   @Test
   void sameLetterIfLetter() {
-    insert("a");
+    defaultInsert("a");
     assertThat(output, is("a"));
   }
 
   @Test
   void sendEmptyIfWhiteSpace() {
-    insert(" ");
+    defaultInsert(" ");
     assertThat(output, is(""));
   }
 
   @Test
   void sameShortIfShort() {
-    insert("ab");
+    defaultInsert("ab");
     assertThat(output, is("ab"));
   }
 
   @Test
   void noLeadingWhiteSpace() {
-    insert(" a");
+    defaultInsert(" a");
     assertThat(output, is("a"));
   }
 
   @Test
   void wrapParagraphIfTwoLongWords() {
-    insert("Storbritanniens invandringslagstiftning");
+    defaultInsert("Storbritanniens invandringslagstiftning");
     assertThat(output,
       is("Storbritanniens" + NL + "invandringslagstiftning")
     );
@@ -56,7 +61,7 @@ public class WordWrapperTest {
 
   @Test
   void wrapParagraphIfThreeWordsTooWide() {
-    insert("opinionsundersökning från SvD/GP/Sifo.");
+    defaultInsert("opinionsundersökning från SvD/GP/Sifo.");
     assertThat(output, is("opinionsundersökning från" + NL + "SvD/GP/Sifo."));
   }
 
@@ -67,27 +72,27 @@ public class WordWrapperTest {
 
   @Test
   void wrapParagraphIfFourWordsTooWide() {
-    insert(unprocessPreamble.substring(0, 34));
+    defaultInsert(unprocessPreamble.substring(0, 34));
     assertThat(output, is("Polisen kommer under veckan" + NL + "trappa"));
   }
 
   @Test
   void wrapParagraphTwoTimesWithTenWords() {
-    insert(unprocessPreamble.substring(0, 63));
+    defaultInsert(unprocessPreamble.substring(0, 63));
     assertThat(output, is("Polisen kommer under veckan" + NL +
       "trappa ned den särskilda insats" + NL + "som"));
   }
 
   @Test
   void veryLongWordShouldBreakItself() {
-    insert("gravmonumentsindustrifabrikationsprodukterna");
+    defaultInsert("gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("gravmonumentsindustrif-"
       + NL + "abrikationsprodukterna"));
   }
 
   @Test
   void veryLongWordAtTheEnd() {
-    insert("trappa ned den särskilda insats " +
+    defaultInsert("trappa ned den särskilda insats " +
       "gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("trappa ned den särskilda insats" + NL +
       "gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
@@ -95,20 +100,20 @@ public class WordWrapperTest {
 
   @Test
   void breakLineAtEnd() {
-    insert("inkommit ett 20-tal observationer");
+    defaultInsert("inkommit ett 20-tal observationer");
     assertThat(output, is("inkommit ett 20-tal" + NL + "observationer"));
   }
 
   @Test
   void veryLongLeftOver() {
-    insert("trappa gravmonumentsindustrifabrikationsprodukterna");
+    defaultInsert("trappa gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("trappa gravmonumentsindustrif-"
       + NL + "abrikationsprodukterna"));
   }
 
   @Test
   void wrapParagraphFourTimesWithNineteenWords() {
-    insert("Polisen kommer under veckan trappa ned den särskilda insats som " +
+    defaultInsert("Polisen kommer under veckan trappa ned den särskilda insats som " +
       "inleddes efter att det inkommit ett 20-tal observationer av drönare");
     assertThat(output, is("Polisen kommer under veckan" + NL +
       "trappa ned den särskilda insats" + NL + "som inleddes efter att det"
@@ -117,7 +122,7 @@ public class WordWrapperTest {
 
   @Test
   void wrapParagraphSixTimesWithTwentyNineWords() {
-    insert(unprocessPreamble);
+    defaultInsert(unprocessPreamble);
     assertThat(output, is("" +
       "Polisen kommer under veckan" + NL +
       "trappa ned den särskilda insats" + NL +
@@ -130,7 +135,7 @@ public class WordWrapperTest {
 
   @Test
   void longArticle() {
-    insert("Det samlade skuldberget hos Kronofogden " +
+    defaultInsert("Det samlade skuldberget hos Kronofogden " +
       "uppgår till 94 miljarder kronor.");
     assertThat(output, is("Det samlade skuldberget hos" + NL +
       "Kronofogden uppgår till 94" + NL + "miljarder kronor."));
@@ -162,13 +167,13 @@ public class WordWrapperTest {
 
   @Test
   void body1() {
-    WordWrapper ww = new WordWrapper("I slutet av 2021 fanns drygt 391 000 " +
+    paragraphInsert("I slutet av 2021 fanns drygt 391 000 " +
       "personer registrerade hos Kronofogden. Det rör sig om en minskning " +
       "med lite över 11 000 personer jämfört med året innan. Kronofogdens " +
       "analytiker Davor Vuleta säger i ett uttalande att en av orsakerna " +
       "till att antalet blivit färre har att göra med att skulderna till " +
-      "staten minskar.", Format.PARAGRAPH);
-    assertThat(ww.wrapWordsWithBisect(), is("" +
+      "staten minskar.", 3);
+    assertThat(output, is("" +
       "   I slutet av 2021 fanns drygt" + NL +
       "391 000 personer registrerade hos" + NL +
       "Kronofogden. Det rör sig om en" + NL +
@@ -182,25 +187,28 @@ public class WordWrapperTest {
   }
 
   @Test
-  @Disabled
   void body2() {
-    WordWrapper ww = new WordWrapper("I slutet av 2021 fanns drygt 391 000 " +
-      "personer registrerade hos Kronofogden. Det rör sig om en minskning " +
-      "med lite över 11 000 personer jämfört med året innan. Kronofogdens " +
-      "analytiker Davor Vuleta säger i ett uttalande att en av orsakerna " +
-      "till att antalet blivit färre har att göra med att skulderna till " +
-      "staten minskar.", Format.PARAGRAPH);
-    assertThat(ww.wrapWordsWithBisect(), is("" +
-      "   I slutet av 2021 fanns drygt" + NL +
-      "391 000 personer registrerade hos" + NL +
-      "Kronofogden. Det rör sig om en" + NL +
-      "minskning med lite över 11 000" + NL +
-      "personer jämfört med året innan." + NL +
-      "Kronofogdens analytiker Davor" + NL +
-      "Vuleta säger i ett uttalande att" + NL +
-      "en av orsakerna till att antalet" + NL +
-      "blivit färre har att göra med att" + NL +
-      "skulderna till staten minskar."));
+    paragraphInsert("– Det beror främst på att radio- " +
+      "och tv-avgiften avskaffats, men också på att färre får skulder rela" +
+      "terade till exempelvis fordon, skatt och studier.", 2);
+    assertThat(output, is("" +
+      "  – Det beror främst på att" + NL +
+      "radio- och tv-avgiften avska-" + NL +
+      "ffats, men också på att färre får" + NL +
+      "skulder relaterade till exemp-" + NL +
+      "elvis fordon, skatt och studier."));
+  }
+
+  @Test
+  @Disabled
+  void body3() {
+    paragraphInsert("Enligt Vuleta handlar det också om att " +
+      "\"den ekonomiska återhämtningen varit stark\".", 2);
+    assertThat(output, is("" +
+      "  Enligt Vuleta handlar det" + NL +
+      "också om att \"den ekonomiska" + NL +
+      "återhämtningen varit stark\"."
+    ));
   }
 
 }

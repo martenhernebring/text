@@ -7,7 +7,7 @@ public class WordWrapper {
 
   private final Word[] words;
 
-  private int lineWidth, newLines, startingSpaces;
+  private int lineWidth, newLines, startingSpaces, longestLine;
   private StringBuilder sb;
   private Word currentWord;
   private boolean bisect;
@@ -16,9 +16,8 @@ public class WordWrapper {
     String[] w = raw.trim().split("\\s+");
     int l = w.length;
     words = new Word[l];
-    for(int i = 0; i < l; i++) {
+    for(int i = 0; i < l; i++)
       words[i] = new Word(w[i], i);
-    }
   }
 
   public WordWrapper(String raw, Format format) {
@@ -26,20 +25,21 @@ public class WordWrapper {
     switch (format) {
       case HEADLINE -> this.max = 12;
       case LEAD -> this.max = 30;
-      case PARAGRAPH -> {
-        this.max = 34;
-        this.startingSpaces = 3;
-      }
+      case PARAGRAPH -> this.max = 33;
       case DEFAULT -> this.max = 32;
     }
+  }
+
+  public WordWrapper(String raw, Format format, int startingSpaces) {
+    this(raw, format);
+    this.startingSpaces = startingSpaces;
   }
 
   public String wrapWords() {
     sb = new StringBuilder();
     lineWidth = 0;
-    for(Word word: words) {
+    for(Word word: words)
       append(word);
-    }
     return sb.toString();
   }
 
@@ -51,11 +51,10 @@ public class WordWrapper {
     newLines = 0;
     String bisected  = wrapWords();
     bisect = false;
-    if(newLines < normalNewLines) {
+    if(newLines < normalNewLines)
       return bisected;
-    } else {
+    else
       return normal;
-    }
   }
 
   private void append(Word word) {
@@ -63,18 +62,25 @@ public class WordWrapper {
       return;
     this.currentWord = word;
     this.lineWidth += word.getLength();
-    if(word.getIndex() > 0)
-      addLeadingWhiteSpace();
-    else {
-      for(int sp = 0; sp < startingSpaces; sp++) {
-        sb.append(" ");
-        lineWidth++;
-      }
-    }
+    addLeadingWhiteSpace();
     addWord();
   }
 
   private void addLeadingWhiteSpace() {
+    if(currentWord.getIndex() > 0)
+      addWhiteSpaceDistance();
+    else
+      addParagraphStartingSpace();
+  }
+
+  private void addParagraphStartingSpace() {
+    for(int sp = 0; sp < startingSpaces; sp++) {
+      sb.append(" ");
+      lineWidth++;
+    }
+  }
+
+  private void addWhiteSpaceDistance() {
     lineWidth++;
     if(!currentWord.isBig(max))
       addWhiteSpaceSmallWord();
