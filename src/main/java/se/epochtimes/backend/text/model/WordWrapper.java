@@ -23,38 +23,43 @@ public class WordWrapper {
   }
 
   private void append(Word word) {
-    if (word.isEmpty()) {
+    if (word.isEmpty())
       return;
-    }
     this.word = word;
-    this.lineWidth += word.getLength() + 1;
-    if(word.getIndex() > 0) {
-      addWhiteSpace();
-    }
+    this.lineWidth += word.getLength();
+    if(word.getIndex() > 0)
+      addLeadingWhiteSpace();
     addWord();
   }
 
-  private void addWhiteSpace() {
-    if(!word.isBig()) {
-      if (isNotBisectable() & isLong()) {
-        sb.append(NL);
-        lineWidth = word.getLength();
-      } else {
-        sb.append(" ");
-      }
-    } else if(!isHuge()){
-      sb.append(" ");
-    } else {
+  private void addLeadingWhiteSpace() {
+    lineWidth++;
+    if(!word.isBig())
+      addWhiteSpaceSmallWord();
+    else
+      addWhiteSpaceBigWord();
+  }
+
+  private void addWhiteSpaceSmallWord() {
+    if (isNotBisectable() & isLong()) {
       sb.append(NL);
-    }
+      lineWidth = word.getLength();
+    } else
+      sb.append(" ");
+  }
+
+  private void addWhiteSpaceBigWord() {
+    if(!isHuge())
+      sb.append(" ");
+    else
+      sb.append(NL);
   }
 
   private void addWord() {
-    if (!word.isBig() && isNotBisectable()) {
+    if (!word.isBig() && isNotBisectable())
       sb.append(word);
-    } else {
+    else
       bisect();
-    }
   }
 
   private void bisect() {
