@@ -58,19 +58,10 @@ public class WordWrapper {
   private void addWord() {
     if (!word.isBig() && isNotBisectable())
       sb.append(word);
-    else
-      bisect();
-  }
-
-  private void bisect() {
-    String firstHalf = word.getFirstHalf();
-    sb.append(firstHalf);
-    if(firstHalf.charAt(firstHalf.length() - 1) != '-')
-      sb.append("-");
-    sb.append(NL);
-    String leftOver = word.getSecondHalf();
-    sb.append(leftOver);
-    lineWidth = leftOver.length();
+    else {
+      sb.append(word.bisect());
+      lineWidth = word.getSecondHalf().length();
+    }
   }
 
   private boolean isLast(int index) {

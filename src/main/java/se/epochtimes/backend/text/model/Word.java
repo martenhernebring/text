@@ -39,4 +39,16 @@ public class Word {
   public String toString() {
     return word;
   }
+
+  public String bisect() {
+    StringBuilder sb = new StringBuilder();
+    String firstHalf = getFirstHalf();
+    sb.append(firstHalf);
+    if(firstHalf.charAt(firstHalf.length() - 1) != '-')
+      sb.append("-");
+    sb.append(System.lineSeparator());
+    String leftOver = getSecondHalf();
+    sb.append(leftOver);
+    return sb.toString();
+  }
 }
