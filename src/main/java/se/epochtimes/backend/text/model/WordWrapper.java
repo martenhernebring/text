@@ -5,27 +5,33 @@ public class WordWrapper {
   public static final String NL = System.lineSeparator();
   public static final int MAX = 32;
 
-  private final String[] words;
+  private final Word[] words;
 
   private int lineWidth;
   private StringBuilder sb;
-  private Word word;
+  private Word currentWord;
 
   public WordWrapper(String raw) {
-    this.words = raw.trim().split("\\s+");
+    String[] w = raw.trim().split("\\s+");
+    int l = w.length;
+    words = new Word[l];
+    for(int i = 0; i < l; i++) {
+      words[i] = new Word(w[i], i);
+    }
   }
 
   public String wrapWords() {
     sb = new StringBuilder();
-    for (int i = 0; i < words.length; i++)
-      append(new Word(words[i], i));
+    for(Word word: words) {
+      append(word);
+    }
     return sb.toString();
   }
 
   private void append(Word word) {
     if (word.isEmpty())
       return;
-    this.word = word;
+    this.currentWord = word;
     this.lineWidth += word.getLength();
     if(word.getIndex() > 0)
       addLeadingWhiteSpace();
@@ -34,7 +40,7 @@ public class WordWrapper {
 
   private void addLeadingWhiteSpace() {
     lineWidth++;
-    if(!word.isBig())
+    if(!currentWord.isBig())
       addWhiteSpaceSmallWord();
     else
       addWhiteSpaceBigWord();
@@ -43,7 +49,7 @@ public class WordWrapper {
   private void addWhiteSpaceSmallWord() {
     if (isNotBisectable() & isLong()) {
       sb.append(NL);
-      lineWidth = word.getLength();
+      lineWidth = currentWord.getLength();
     } else
       sb.append(" ");
   }
@@ -56,11 +62,11 @@ public class WordWrapper {
   }
 
   private void addWord() {
-    if (!word.isBig() && isNotBisectable())
-      sb.append(word);
+    if (isNotBisectable())
+      sb.append(currentWord);
     else {
-      sb.append(word.bisect());
-      lineWidth = word.getSecondHalf().length();
+      sb.append(currentWord.bisect());
+      lineWidth = currentWord.getSecondHalf().length();
     }
   }
 
@@ -73,10 +79,11 @@ public class WordWrapper {
   }
 
   private boolean isHuge() {
-    return lineWidth - word.getLength()/2 > MAX;
+    return lineWidth - currentWord.getLength()/2 > MAX;
   }
 
   private boolean isNotBisectable() {
-    return !isLong() || word.getLength() <= 7 || (isLast(word.getIndex()) && !word.isBig());
+    return !isLong() || currentWord.getLength() <= 7 ||
+      (isLast(currentWord.getIndex()) && !currentWord.isBig());
   }
 }
