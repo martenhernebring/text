@@ -38,15 +38,12 @@ public class Word {
     return word;
   }
 
-  public String bisect() {
+  public String bisectFirstHalf() {
     StringBuilder sb = new StringBuilder();
     String firstHalf = getFirstHalf();
     sb.append(firstHalf);
     if(firstHalf.charAt(firstHalf.length() - 1) != '-')
       sb.append("-");
-    sb.append(System.lineSeparator());
-    String leftOver = getSecondHalf();
-    sb.append(leftOver);
     return sb.toString();
   }
 }

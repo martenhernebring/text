@@ -3,6 +3,8 @@ package se.epochtimes.backend.text.model;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,14 +14,23 @@ public class WordWrapperTest {
 
   private String output;
 
+  private void setOutput(List<String> lines) {
+    StringBuilder sb = new StringBuilder();
+    for(String l: lines) {
+      sb.append(l);
+      sb.append(NL);
+    }
+    output = sb.toString();
+  }
+
   private void defaultInsert(String insert) {
     WordWrapper ww = new WordWrapper(insert, Format.DEFAULT);
-    output = ww.wrapWordsWithBisect();
+    setOutput(ww.wrapWordsWithBisect());
   }
 
   private void paragraphInsert(String insert, int startingSpaces) {
     WordWrapper ww = new WordWrapper(insert, Format.PARAGRAPH, startingSpaces);
-    output = ww.wrapWordsWithBisect();
+    setOutput(ww.wrapWordsWithBisect());
   }
 
   @Test
@@ -30,39 +41,39 @@ public class WordWrapperTest {
   @Test
   void sameLetterIfLetter() {
     defaultInsert("a");
-    assertThat(output, is("a"));
+    assertThat(output, is("a" + NL));
   }
 
   @Test
   void sendEmptyIfWhiteSpace() {
     defaultInsert(" ");
-    assertThat(output, is(""));
+    assertThat(output, is(NL));
   }
 
   @Test
   void sameShortIfShort() {
     defaultInsert("ab");
-    assertThat(output, is("ab"));
+    assertThat(output, is("ab" + NL));
   }
 
   @Test
   void noLeadingWhiteSpace() {
     defaultInsert(" a");
-    assertThat(output, is("a"));
+    assertThat(output, is("a" + NL));
   }
 
   @Test
   void wrapParagraphIfTwoLongWords() {
     defaultInsert("Storbritanniens invandringslagstiftning");
     assertThat(output,
-      is("Storbritanniens" + NL + "invandringslagstiftning")
+      is("Storbritanniens" + NL + "invandringslagstiftning" + NL)
     );
   }
 
   @Test
   void wrapParagraphIfThreeWordsTooWide() {
     defaultInsert("opinionsundersökning från SvD/GP/Sifo.");
-    assertThat(output, is("opinionsundersökning från" + NL + "SvD/GP/Sifo."));
+    assertThat(output, is("opinionsundersökning från" + NL + "SvD/GP/Sifo." + NL));
   }
 
   final String unprocessPreamble =
@@ -73,21 +84,21 @@ public class WordWrapperTest {
   @Test
   void wrapParagraphIfFourWordsTooWide() {
     defaultInsert(unprocessPreamble.substring(0, 34));
-    assertThat(output, is("Polisen kommer under veckan" + NL + "trappa"));
+    assertThat(output, is("Polisen kommer under veckan" + NL + "trappa" + NL));
   }
 
   @Test
   void wrapParagraphTwoTimesWithTenWords() {
     defaultInsert(unprocessPreamble.substring(0, 63));
     assertThat(output, is("Polisen kommer under veckan" + NL +
-      "trappa ned den särskilda insats" + NL + "som"));
+      "trappa ned den särskilda insats" + NL + "som" + NL));
   }
 
   @Test
   void veryLongWordShouldBreakItself() {
     defaultInsert("gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("gravmonumentsindustrif-"
-      + NL + "abrikationsprodukterna"));
+      + NL + "abrikationsprodukterna" + NL));
   }
 
   @Test
@@ -95,20 +106,20 @@ public class WordWrapperTest {
     defaultInsert("trappa ned den särskilda insats " +
       "gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("trappa ned den särskilda insats" + NL +
-      "gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
+      "gravmonumentsindustrif-" + NL + "abrikationsprodukterna" + NL));
   }
 
   @Test
   void breakLineAtEnd() {
     defaultInsert("inkommit ett 20-tal observationer");
-    assertThat(output, is("inkommit ett 20-tal" + NL + "observationer"));
+    assertThat(output, is("inkommit ett 20-tal" + NL + "observationer" + NL));
   }
 
   @Test
   void veryLongLeftOver() {
     defaultInsert("trappa gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("trappa gravmonumentsindustrif-"
-      + NL + "abrikationsprodukterna"));
+      + NL + "abrikationsprodukterna" + NL));
   }
 
   @Test
@@ -117,7 +128,7 @@ public class WordWrapperTest {
       "inleddes efter att det inkommit ett 20-tal observationer av drönare");
     assertThat(output, is("Polisen kommer under veckan" + NL +
       "trappa ned den särskilda insats" + NL + "som inleddes efter att det"
-      + NL + "inkommit ett 20-tal" + NL + "observationer av drönare"));
+      + NL + "inkommit ett 20-tal" + NL + "observationer av drönare" + NL));
   }
 
   @Test
@@ -130,7 +141,7 @@ public class WordWrapperTest {
       "mmit ett 20-tal observationer av" + NL +
       "drönare runt om i Sverige. Bland" + NL +
       "annat observerades drönare över" + NL +
-      "kärnkraftverk."));
+      "kärnkraftverk." + NL));
   }
 
   @Test
@@ -138,15 +149,16 @@ public class WordWrapperTest {
     defaultInsert("Det samlade skuldberget hos Kronofogden " +
       "uppgår till 94 miljarder kronor.");
     assertThat(output, is("Det samlade skuldberget hos" + NL +
-      "Kronofogden uppgår till 94" + NL + "miljarder kronor."));
+      "Kronofogden uppgår till 94" + NL + "miljarder kronor." + NL));
   }
 
   @Test
   void title() {
     WordWrapper ww = new WordWrapper(
       "Kronofogden: De samlade skulderna större än någonsin", Format.HEADLINE);
-    assertThat(ww.wrapWords(), is("Kronofogden:" + NL + "De samlade" + NL +
-      "skulderna" + NL + "större än" + NL + "någonsin"));
+    setOutput(ww.wrapWords());
+    assertThat(output, is("Kronofogden:" + NL + "De samlade" + NL +
+      "skulderna" + NL + "större än" + NL + "någonsin" + NL));
   }
 
   @Test
@@ -155,14 +167,15 @@ public class WordWrapperTest {
       "Antalet svenskar som har skulder hos Kronofogden är det lägsta " +
       "på 30 år. Däremot är det samlade skuldberget större än någonsin och " +
       "växer snabbt. Det visar ny statistik från myndigheten.", Format.LEAD);
-    assertThat(ww.wrapWords(), is("" +
+    setOutput(ww.wrapWords());
+    assertThat(output, is("" +
       "Antalet svenskar som har" + NL +
       "skulder hos Kronofogden är det" + NL +
       "lägsta på 30 år. Däremot är" + NL +
       "det samlade skuldberget större" + NL +
       "än någonsin och växer snabbt." + NL +
       "Det visar ny statistik från" + NL +
-      "myndigheten."));
+      "myndigheten." + NL));
   }
 
   @Test
@@ -183,7 +196,7 @@ public class WordWrapperTest {
       "Vuleta säger i ett uttalande att" + NL +
       "en av orsakerna till att antalet" + NL +
       "blivit färre har att göra med att" + NL +
-      "skulderna till staten minskar."));
+      "skulderna till staten minskar." + NL));
   }
 
   @Test
@@ -196,7 +209,7 @@ public class WordWrapperTest {
       "radio- och tv-avgiften avska-" + NL +
       "ffats, men också på att färre får" + NL +
       "skulder relaterade till exemp-" + NL +
-      "elvis fordon, skatt och studier."));
+      "elvis fordon, skatt och studier." + NL));
   }
 
   @Test
@@ -207,7 +220,7 @@ public class WordWrapperTest {
     assertThat(output, is("" +
       "  Enligt Vuleta handlar det" + NL +
       "också om att \"den ekonomiska" + NL +
-      "återhämtningen varit stark\"."
+      "återhämtningen varit stark\"." + NL
     ));
   }
 

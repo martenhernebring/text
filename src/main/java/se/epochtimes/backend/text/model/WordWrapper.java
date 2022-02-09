@@ -1,14 +1,18 @@
 package se.epochtimes.backend.text.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WordWrapper {
 
   public static final String NL = System.lineSeparator();
   private int max;
 
   private final Word[] words;
+  private List<String> lines;
 
-  private int lineWidth, newLines, startingSpaces, longestLine;
-  private StringBuilder sb;
+  private int lineWidth, startingSpaces;
+  private StringBuilder sb = new StringBuilder();;
   private Word currentWord;
   private boolean bisect;
 
@@ -35,23 +39,23 @@ public class WordWrapper {
     this.startingSpaces = startingSpaces;
   }
 
-  public String wrapWords() {
-    sb = new StringBuilder();
+  public List<String> wrapWords() {
+    lines = new ArrayList<>();
     lineWidth = 0;
     for(Word word: words)
       append(word);
-    return sb.toString();
+    lines.add(sb.toString());
+    sb.setLength(0);
+    return lines;
   }
 
-  public String wrapWordsWithBisect() {
-    newLines = 0;
-    String normal = wrapWords();
-    int normalNewLines = newLines;
+  public List<String> wrapWordsWithBisect() {
+    List<String> normal = wrapWords();
+    int normalNewLines = normal.size();
     bisect = true;
-    newLines = 0;
-    String bisected  = wrapWords();
+    List<String> bisected  = wrapWords();
     bisect = false;
-    if(newLines < normalNewLines)
+    if(bisected.size() < normalNewLines)
       return bisected;
     else
       return normal;
@@ -90,8 +94,8 @@ public class WordWrapper {
 
   private void addWhiteSpaceSmallWord() {
     if ((!bisect || isNotBisectable()) && isLong()) {
-      sb.append(NL);
-      newLines++;
+      lines.add(sb.toString());
+      sb.setLength(0);
       lineWidth = currentWord.getLength();
     } else
       sb.append(" ");
@@ -101,8 +105,8 @@ public class WordWrapper {
     if(!isHuge())
       sb.append(" ");
     else {
-      sb.append(NL);
-      newLines++;
+      lines.add(sb.toString());
+      sb.setLength(0);
     }
   }
 
@@ -110,10 +114,17 @@ public class WordWrapper {
     if (!currentWord.isBig(max) && (!bisect || isNotBisectable()))
       sb.append(currentWord);
     else {
-      sb.append(currentWord.bisect());
-      newLines++;
-      lineWidth = currentWord.getSecondHalf().length();
+      bisect();
     }
+  }
+
+  private void bisect() {
+    sb.append(currentWord.bisectFirstHalf());
+    lines.add(sb.toString());
+    sb.setLength(0);
+    String leftOver = currentWord.getSecondHalf();
+    sb.append(leftOver);
+    lineWidth = leftOver.length();
   }
 
   private boolean isLong() {
