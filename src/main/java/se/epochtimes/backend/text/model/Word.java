@@ -1,7 +1,5 @@
 package se.epochtimes.backend.text.model;
 
-import static se.epochtimes.backend.text.model.WordWrapper.MAX;
-
 public class Word {
   private final String word;
   private final int index;
@@ -23,8 +21,8 @@ public class Word {
     return index;
   }
 
-  boolean isBig() {
-    return getLength() > MAX;
+  boolean isBig(int max) {
+    return getLength() > max;
   }
 
   String getFirstHalf() {

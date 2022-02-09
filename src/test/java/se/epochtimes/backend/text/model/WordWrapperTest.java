@@ -13,8 +13,8 @@ public class WordWrapperTest {
   private String output;
 
   private void insert(String insert) {
-    WordWrapper ww = new WordWrapper(insert);
-    output = ww.wrapWords();
+    WordWrapper ww = new WordWrapper(insert, Format.DEFAULT);
+    output = ww.wrapWordsWithBisect();
   }
 
   @Test
@@ -81,12 +81,14 @@ public class WordWrapperTest {
   @Test
   void veryLongWordShouldBreakItself() {
     insert("gravmonumentsindustrifabrikationsprodukterna");
-    assertThat(output, is("gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
+    assertThat(output, is("gravmonumentsindustrif-"
+      + NL + "abrikationsprodukterna"));
   }
 
   @Test
   void veryLongWordAtTheEnd() {
-    insert("trappa ned den särskilda insats gravmonumentsindustrifabrikationsprodukterna");
+    insert("trappa ned den särskilda insats " +
+      "gravmonumentsindustrifabrikationsprodukterna");
     assertThat(output, is("trappa ned den särskilda insats" + NL +
       "gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
   }
@@ -100,33 +102,105 @@ public class WordWrapperTest {
   @Test
   void veryLongLeftOver() {
     insert("trappa gravmonumentsindustrifabrikationsprodukterna");
-    assertThat(output, is("trappa gravmonumentsindustrif-" + NL + "abrikationsprodukterna"));
+    assertThat(output, is("trappa gravmonumentsindustrif-"
+      + NL + "abrikationsprodukterna"));
   }
 
   @Test
   void wrapParagraphFourTimesWithNineteenWords() {
-    insert("Polisen kommer under veckan trappa ned den särskilda insats som inleddes efter att "
-      + "det inkommit ett 20-tal observationer av drönare");
+    insert("Polisen kommer under veckan trappa ned den särskilda insats som " +
+      "inleddes efter att det inkommit ett 20-tal observationer av drönare");
     assertThat(output, is("Polisen kommer under veckan" + NL +
-      "trappa ned den särskilda insats" + NL + "som inleddes efter att det inko-" + NL +
-      "mmit ett 20-tal observationer av" + NL + "drönare"));
+      "trappa ned den särskilda insats" + NL + "som inleddes efter att det"
+      + NL + "inkommit ett 20-tal" + NL + "observationer av drönare"));
   }
 
   @Test
   void wrapParagraphSixTimesWithTwentyNineWords() {
     insert(unprocessPreamble);
-    assertThat(output, is("Polisen kommer under veckan" + NL +
-      "trappa ned den särskilda insats" + NL + "som inleddes efter att det inko-"
-      + NL + "mmit ett 20-tal observationer av" + NL + "drönare runt om i Sverige. Bland"
-      + NL + "annat observerades drönare över" + NL + "kärnkraftverk."));
+    assertThat(output, is("" +
+      "Polisen kommer under veckan" + NL +
+      "trappa ned den särskilda insats" + NL +
+      "som inleddes efter att det inko-" + NL +
+      "mmit ett 20-tal observationer av" + NL +
+      "drönare runt om i Sverige. Bland" + NL +
+      "annat observerades drönare över" + NL +
+      "kärnkraftverk."));
+  }
+
+  @Test
+  void longArticle() {
+    insert("Det samlade skuldberget hos Kronofogden " +
+      "uppgår till 94 miljarder kronor.");
+    assertThat(output, is("Det samlade skuldberget hos" + NL +
+      "Kronofogden uppgår till 94" + NL + "miljarder kronor."));
+  }
+
+  @Test
+  void title() {
+    WordWrapper ww = new WordWrapper(
+      "Kronofogden: De samlade skulderna större än någonsin", Format.HEADLINE);
+    assertThat(ww.wrapWords(), is("Kronofogden:" + NL + "De samlade" + NL +
+      "skulderna" + NL + "större än" + NL + "någonsin"));
+  }
+
+  @Test
+  void ingress() {
+    WordWrapper ww = new WordWrapper(
+      "Antalet svenskar som har skulder hos Kronofogden är det lägsta " +
+      "på 30 år. Däremot är det samlade skuldberget större än någonsin och " +
+      "växer snabbt. Det visar ny statistik från myndigheten.", Format.LEAD);
+    assertThat(ww.wrapWords(), is("" +
+      "Antalet svenskar som har" + NL +
+      "skulder hos Kronofogden är det" + NL +
+      "lägsta på 30 år. Däremot är" + NL +
+      "det samlade skuldberget större" + NL +
+      "än någonsin och växer snabbt." + NL +
+      "Det visar ny statistik från" + NL +
+      "myndigheten."));
+  }
+
+  @Test
+  void body1() {
+    WordWrapper ww = new WordWrapper("I slutet av 2021 fanns drygt 391 000 " +
+      "personer registrerade hos Kronofogden. Det rör sig om en minskning " +
+      "med lite över 11 000 personer jämfört med året innan. Kronofogdens " +
+      "analytiker Davor Vuleta säger i ett uttalande att en av orsakerna " +
+      "till att antalet blivit färre har att göra med att skulderna till " +
+      "staten minskar.", Format.PARAGRAPH);
+    assertThat(ww.wrapWordsWithBisect(), is("" +
+      "   I slutet av 2021 fanns drygt" + NL +
+      "391 000 personer registrerade hos" + NL +
+      "Kronofogden. Det rör sig om en" + NL +
+      "minskning med lite över 11 000" + NL +
+      "personer jämfört med året innan." + NL +
+      "Kronofogdens analytiker Davor" + NL +
+      "Vuleta säger i ett uttalande att" + NL +
+      "en av orsakerna till att antalet" + NL +
+      "blivit färre har att göra med att" + NL +
+      "skulderna till staten minskar."));
   }
 
   @Test
   @Disabled
-  void longArticle() {
-    insert("Det samlade skuldberget hos Kronofogden uppgår till 94 miljarder kronor.");
-    assertThat(output, is("Det samlade skuldberget hos" + NL +
-      "Kronofogden uppgår till 94" + NL + "miljarder kronor."));
+  void body2() {
+    WordWrapper ww = new WordWrapper("I slutet av 2021 fanns drygt 391 000 " +
+      "personer registrerade hos Kronofogden. Det rör sig om en minskning " +
+      "med lite över 11 000 personer jämfört med året innan. Kronofogdens " +
+      "analytiker Davor Vuleta säger i ett uttalande att en av orsakerna " +
+      "till att antalet blivit färre har att göra med att skulderna till " +
+      "staten minskar.", Format.PARAGRAPH);
+    assertThat(ww.wrapWordsWithBisect(), is("" +
+      "   I slutet av 2021 fanns drygt" + NL +
+      "391 000 personer registrerade hos" + NL +
+      "Kronofogden. Det rör sig om en" + NL +
+      "minskning med lite över 11 000" + NL +
+      "personer jämfört med året innan." + NL +
+      "Kronofogdens analytiker Davor" + NL +
+      "Vuleta säger i ett uttalande att" + NL +
+      "en av orsakerna till att antalet" + NL +
+      "blivit färre har att göra med att" + NL +
+      "skulderna till staten minskar."));
   }
 
 }
