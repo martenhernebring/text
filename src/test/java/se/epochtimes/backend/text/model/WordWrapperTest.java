@@ -298,4 +298,21 @@ public class WordWrapperTest {
     ));
   }
 
+  @Test
+  void body9() {
+    paragraphInsert("Högst andel skuldsatta invånare återfinns i kommunen " +
+      "Ljusnarsberg i Örebro län följt av Perstorp i Skåne och Eda i " +
+      "Värmland. Lägst andel skuldsatta har skånska Lomma, som följs av " +
+      "Danderyd och Täby i Stockholmsområdet", 2);
+    assertThat(output, is("" +
+        "  Högst andel skuldsatta invånare" + NL +
+      "återfinns i kommunen Ljusnarsberg" + NL +
+      "i Örebro län följt av Perstorp i" + NL +
+      "Skåne och Eda i Värmland. Lägst" + NL +
+      "andel skuldsatta har skånska" + NL +
+      "Lomma, som följs av Danderyd och" + NL +
+      "Täby i Stockholmsområdet" + NL
+    ));
+  }
+
 }
