@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.controllers;
+package se.epochtimes.backend.text.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import se.epochtimes.backend.text.dto.TextDTO;
 import se.epochtimes.backend.text.model.text.Subject;
-import se.epochtimes.backend.text.services.TextService;
+import se.epochtimes.backend.text.service.TextService;
 
 import java.util.List;
 

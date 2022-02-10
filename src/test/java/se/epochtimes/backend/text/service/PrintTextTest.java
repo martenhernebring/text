@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.services;
+package se.epochtimes.backend.text.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

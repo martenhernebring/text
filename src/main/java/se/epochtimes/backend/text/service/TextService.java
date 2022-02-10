@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.services;
+package se.epochtimes.backend.text.service;
 
 import org.springframework.stereotype.Service;
 import se.epochtimes.backend.text.dto.TextDTO;

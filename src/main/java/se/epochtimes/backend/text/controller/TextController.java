@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.controllers;
+package se.epochtimes.backend.text.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.services.TextService;
+import se.epochtimes.backend.text.service.TextService;
 
 import java.util.List;
 
