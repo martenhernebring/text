@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.Subject;
+import se.epochtimes.backend.text.model.text.Subject;
 import se.epochtimes.backend.text.services.TextService;
 
 import java.util.List;

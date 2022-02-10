@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import se.epochtimes.backend.text.model.Subject;
-import se.epochtimes.backend.text.model.Text;
+import se.epochtimes.backend.text.model.text.Subject;
+import se.epochtimes.backend.text.model.text.Text;
 
 import java.io.File;
 import java.io.IOException;

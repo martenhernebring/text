@@ -2,8 +2,8 @@ package se.epochtimes.backend.text.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import se.epochtimes.backend.text.model.Subject;
-import se.epochtimes.backend.text.model.Text;
+import se.epochtimes.backend.text.model.text.Subject;
+import se.epochtimes.backend.text.model.text.Text;
 
 import java.io.Serializable;
 import java.util.Collections;

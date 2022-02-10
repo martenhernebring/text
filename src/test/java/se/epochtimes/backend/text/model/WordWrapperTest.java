@@ -1,13 +1,15 @@
 package se.epochtimes.backend.text.model;
 
 import org.junit.jupiter.api.Test;
+import se.epochtimes.backend.text.model.wrap.Format;
+import se.epochtimes.backend.text.model.wrap.WordWrapper;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static se.epochtimes.backend.text.model.WordWrapper.NL;
+import static se.epochtimes.backend.text.model.wrap.WordWrapper.NL;
 
 public class WordWrapperTest {
 

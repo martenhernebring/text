@@ -2,7 +2,7 @@ package se.epochtimes.backend.text.services;
 
 import org.springframework.stereotype.Service;
 import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.Text;
+import se.epochtimes.backend.text.model.text.Text;
 import se.epochtimes.backend.text.repository.TextRepository;
 
 import java.util.List;

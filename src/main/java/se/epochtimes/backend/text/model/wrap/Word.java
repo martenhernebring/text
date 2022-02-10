@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model;
+package se.epochtimes.backend.text.model.wrap;
 
 public class Word {
   private final String word;

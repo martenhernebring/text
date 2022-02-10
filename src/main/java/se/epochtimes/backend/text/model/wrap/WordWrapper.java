@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model;
+package se.epochtimes.backend.text.model.wrap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 

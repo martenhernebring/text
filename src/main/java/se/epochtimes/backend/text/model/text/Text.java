@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model;
+package se.epochtimes.backend.text.model.text;
 
 import se.epochtimes.backend.text.dto.TextDTO;
 

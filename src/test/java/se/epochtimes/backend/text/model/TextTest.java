@@ -1,6 +1,8 @@
 package se.epochtimes.backend.text.model;
 
 import org.junit.jupiter.api.Test;
+import se.epochtimes.backend.text.model.text.Text;
+import se.epochtimes.backend.text.model.text.StringListSingleton;
 
 import java.util.List;
 

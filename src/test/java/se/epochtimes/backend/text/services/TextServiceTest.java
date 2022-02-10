@@ -7,9 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.StringListSingleton;
-import se.epochtimes.backend.text.model.Subject;
-import se.epochtimes.backend.text.model.Text;
+import se.epochtimes.backend.text.model.text.StringListSingleton;
+import se.epochtimes.backend.text.model.text.Subject;
+import se.epochtimes.backend.text.model.text.Text;
 import se.epochtimes.backend.text.repository.TextRepository;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MockServiceTest {
+public class TextServiceTest {
 
   @Mock
   private TextRepository mockedTextRepository;

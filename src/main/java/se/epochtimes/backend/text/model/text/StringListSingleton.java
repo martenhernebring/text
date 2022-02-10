@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model;
+package se.epochtimes.backend.text.model.text;
 
 import java.util.ArrayList;
 import java.util.Collections;
