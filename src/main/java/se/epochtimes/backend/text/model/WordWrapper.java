@@ -1,5 +1,7 @@
 package se.epochtimes.backend.text.model;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ public class WordWrapper {
   private List<String> lines;
 
   private int lineWidth, startingSpaces;
-  private StringBuilder sb = new StringBuilder();;
+  private final StringBuilder sb = new StringBuilder();
   private Word currentWord;
   private boolean bisect;
 
@@ -46,6 +48,8 @@ public class WordWrapper {
       append(word);
     lines.add(sb.toString());
     sb.setLength(0);
+    ImmutablePair<Integer, String> l = findLongest();
+    updateIfNecessary(l);
     return lines;
   }
 
@@ -125,6 +129,33 @@ public class WordWrapper {
     String leftOver = currentWord.getSecondHalf();
     sb.append(leftOver);
     lineWidth = leftOver.length();
+  }
+
+  private ImmutablePair<Integer, String> findLongest() {
+    int index = 0;
+    String longest = lines.get(0);
+    for (int i = 1; i < lines.size(); ++i) {
+      if (lines.get(i).length() > longest.length()) {
+        longest = lines.get(i);
+        index = i;
+      }
+    }
+    return new ImmutablePair<>(index, longest);
+  }
+
+  private void updateIfNecessary(ImmutablePair<Integer, String> longest) {
+    int li = longest.getLeft();
+    String ls = longest.getRight();
+    if (li < (lines.size() - 1)) {
+      String[] w = ls.split(" ");
+      String next = lines.get(li + 1);
+      String lw = w[w.length - 1];
+      int proposal = next.length() + lw.length();
+      if(proposal <= max && proposal < ls.length()) {
+        lines.set(li, ls.substring(0, ls.length() - lw.length() - 1));
+        lines.set(li + 1, ls.substring(ls.length() - lw.length()) + " " + next);
+      }
+    }
   }
 
   private boolean isLong() {

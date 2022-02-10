@@ -1,6 +1,5 @@
 package se.epochtimes.backend.text.model;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -73,7 +72,7 @@ public class WordWrapperTest {
   @Test
   void wrapParagraphIfThreeWordsTooWide() {
     defaultInsert("opinionsundersökning från SvD/GP/Sifo.");
-    assertThat(output, is("opinionsundersökning från" + NL + "SvD/GP/Sifo." + NL));
+    assertThat(output, is("opinionsundersökning" + NL + "från SvD/GP/Sifo." + NL));
   }
 
   final String unprocessPreamble =
@@ -84,14 +83,14 @@ public class WordWrapperTest {
   @Test
   void wrapParagraphIfFourWordsTooWide() {
     defaultInsert(unprocessPreamble.substring(0, 34));
-    assertThat(output, is("Polisen kommer under veckan" + NL + "trappa" + NL));
+    assertThat(output, is("Polisen kommer under" + NL + "veckan trappa" + NL));
   }
 
   @Test
   void wrapParagraphTwoTimesWithTenWords() {
     defaultInsert(unprocessPreamble.substring(0, 63));
     assertThat(output, is("Polisen kommer under veckan" + NL +
-      "trappa ned den särskilda insats" + NL + "som" + NL));
+      "trappa ned den särskilda" + NL + "insats som" + NL));
   }
 
   @Test
@@ -105,8 +104,8 @@ public class WordWrapperTest {
   void veryLongWordAtTheEnd() {
     defaultInsert("trappa ned den särskilda insats " +
       "gravmonumentsindustrifabrikationsprodukterna");
-    assertThat(output, is("trappa ned den särskilda insats" + NL +
-      "gravmonumentsindustrif-" + NL + "abrikationsprodukterna" + NL));
+    assertThat(output, is("trappa ned den särskilda" + NL +
+      "insats gravmonumentsindustrif-" + NL + "abrikationsprodukterna" + NL));
   }
 
   @Test
@@ -213,7 +212,6 @@ public class WordWrapperTest {
   }
 
   @Test
-  @Disabled
   void body3() {
     paragraphInsert("Enligt Vuleta handlar det också om att " +
       "\"den ekonomiska återhämtningen varit stark\".", 2);
@@ -221,6 +219,82 @@ public class WordWrapperTest {
       "  Enligt Vuleta handlar det" + NL +
       "också om att \"den ekonomiska" + NL +
       "återhämtningen varit stark\"." + NL
+    ));
+  }
+
+  @Test
+  void body4() {
+    paragraphInsert("– De olika stödpaketen har mildrat effekterna av " +
+      "pandemin och fungerat som en sorts krockkudde.", 2);
+    assertThat(output, is("" +
+      "  – De olika stödpaketen har" + NL +
+      "mildrat effekterna av pandemin" + NL +
+      "och fungerat som en sorts" + NL +
+      "krockkudde." + NL
+    ));
+  }
+
+  @Test
+  void body5() {
+    paragraphInsert("Vid årsskiftet var den samlade skulden hos " +
+      "Kronofogden 94 miljarder kronor, en ökning med sju miljarder " +
+      "kronor sedan 2020 eller nästan 20 miljoner kronor om dagen. På tio " +
+      "år har skuldberget vuxit med över 32 miljarder kronor.", 2);
+    assertThat(output, is("" +
+      "  Vid årsskiftet var den samlade" + NL +
+      "skulden hos Kronofogden 94" + NL +
+      "miljarder kronor, en ökning med" + NL +
+      "sju miljarder kronor sedan 2020" + NL +
+      "eller nästan 20 miljoner kronor" + NL +
+      "om dagen. På tio år har" + NL +
+      "skuldberget vuxit med över 32" + NL +
+      "miljarder kronor." + NL
+    ));
+  }
+
+  @Test
+  void body6() {
+    paragraphInsert("De personer som har skulder hos Kronofogden betalar i " +
+      "regel först räntor och avgifter. Endast om pengarna räcker går " +
+      "betalningarna till själva skulden.", 2);
+    assertThat(output, is("" +
+      "  De personer som har skulder hos" + NL +
+      "Kronofogden betalar i regel först" + NL +
+      "räntor och avgifter. Endast om" + NL +
+      "pengarna räcker går betalningarna" + NL +
+      "till själva skulden." + NL
+    ));
+  }
+
+  @Test
+  void body7() {
+    paragraphInsert("– Många skuldsatta betalar år efter år genom att vi " +
+      "mäter ut deras lön. Trots det är grundskulden kvar. Det de betalar " +
+      "går till räntorna. Det tycker vi är ett systemfel som gör att " +
+      "människor fastnar i decennier med skulder hos oss, säger biträdande " +
+      "rikskronofogde Cecilia Hegethorn Mogensen.", 2);
+    assertThat(output, is("" +
+      "  – Många skuldsatta betalar år" + NL +
+      "efter år genom att vi mäter ut" + NL +
+      "deras lön. Trots det är" + NL +
+      "grundskulden kvar. Det de betalar" + NL +
+      "går till räntorna. Det tycker vi" + NL +
+      "är ett systemfel som gör att" + NL +
+      "människor fastnar i decennier med" + NL +
+      "skulder hos oss, säger biträdande" + NL +
+      "rikskronofogde Cecilia Hegethorn" + NL +
+      "Mogensen." + NL
+    ));
+  }
+
+  @Test
+  void body8() {
+    paragraphInsert("I 46 av landets 290 kommuner ökar antalet personer med " +
+      "skulder till Kronofogden.", 2);
+    assertThat(output, is("" +
+      "  I 46 av landets 290 kommuner" + NL +
+      "ökar antalet personer med" + NL +
+      "skulder till Kronofogden." + NL
     ));
   }
 
