@@ -1,6 +1,7 @@
 package se.epochtimes.backend.text.model.text;
 
 import se.epochtimes.backend.text.dto.TextDTO;
+import se.epochtimes.backend.text.model.Subject;
 
 import javax.persistence.*;
 import java.util.List;
