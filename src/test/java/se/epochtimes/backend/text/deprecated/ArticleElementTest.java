@@ -1,7 +1,7 @@
-package se.epochtimes.backend.text.model;
+package se.epochtimes.backend.text.deprecated;
 
 import org.junit.jupiter.api.Test;
-import se.epochtimes.backend.text.model.text.StringListSingleton;
+import se.epochtimes.backend.text.deprecated.text.StringListSingleton;
 
 import java.util.ArrayList;
 import java.util.List;

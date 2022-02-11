@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.controller;
+package se.epochtimes.backend.text.deprecated;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.Subject;
+import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.service.TextService;
 
 import java.util.List;
@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@ComponentScan(basePackages = "se.epochtimes.backend.text.deprecated")
 @WebMvcTest
 @AutoConfigureMockMvc
 public class TextControllerTest {

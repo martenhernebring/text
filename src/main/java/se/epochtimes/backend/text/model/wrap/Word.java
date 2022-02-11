@@ -21,8 +21,8 @@ public class Word {
     return index;
   }
 
-  boolean isBig(int max) {
-    return getLength() > max;
+  boolean isNotBig(int max) {
+    return getLength() <= max;
   }
 
   String getFirstHalf() {

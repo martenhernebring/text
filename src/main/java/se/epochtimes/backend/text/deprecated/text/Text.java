@@ -1,7 +1,7 @@
-package se.epochtimes.backend.text.model.text;
+package se.epochtimes.backend.text.deprecated.text;
 
-import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.Subject;
+import se.epochtimes.backend.text.deprecated.TextDTO;
+import se.epochtimes.backend.text.model.header.Subject;
 
 import javax.persistence.*;
 import java.util.List;

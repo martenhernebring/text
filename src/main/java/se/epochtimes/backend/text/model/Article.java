@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model.wrap;
+package se.epochtimes.backend.text.model;
 
 import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
@@ -16,15 +16,16 @@ public class Article {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
   private Long id;
-  private final HeaderComponent headerComponent;
-  private final MainComponent mainComponent;
-  private final ImageComponent imageComponent;
-  private String articleId;
+  private HeaderComponent headerComponent;
+  private MainComponent mainComponent;
+  private ImageComponent imageComponent;
+  private final String articleId;
 
-  public Article(ArticleDTO dto) {
+  public Article(ArticleDTO dto, String articleId) {
     headerComponent = dto.header();
     mainComponent = dto.main();
     imageComponent = dto.image();
+    this.articleId = articleId;
   }
 
   public HeaderComponent getHeader() {
@@ -39,7 +40,19 @@ public class Article {
     return this.imageComponent;
   }
 
-  public void setArticleId(String articleId) {
-    this.articleId = articleId;
+  public String getArticleId() {
+    return articleId;
+  }
+
+  public void setHeader(HeaderComponent header) {
+    this.headerComponent = header;
+  }
+
+  public void setMain(MainComponent main) {
+    this.mainComponent = main;
+  }
+
+  public void setImage(ImageComponent image) {
+    this.imageComponent = image;
   }
 }

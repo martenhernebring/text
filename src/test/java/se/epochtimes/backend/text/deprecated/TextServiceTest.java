@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.service;
+package se.epochtimes.backend.text.deprecated;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,11 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.epochtimes.backend.text.dto.TextDTO;
-import se.epochtimes.backend.text.model.text.StringListSingleton;
-import se.epochtimes.backend.text.model.Subject;
-import se.epochtimes.backend.text.model.text.Text;
-import se.epochtimes.backend.text.repository.TextRepository;
+import se.epochtimes.backend.text.deprecated.TextDTO;
+import se.epochtimes.backend.text.deprecated.text.StringListSingleton;
+import se.epochtimes.backend.text.model.header.Subject;
+import se.epochtimes.backend.text.deprecated.text.Text;
+import se.epochtimes.backend.text.deprecated.TextRepository;
+import se.epochtimes.backend.text.service.TextService;
 
 import java.util.ArrayList;
 

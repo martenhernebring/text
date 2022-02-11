@@ -5,7 +5,7 @@ import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.exception.AlreadySubmittedException;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
-import se.epochtimes.backend.text.model.wrap.Article;
+import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.List;
@@ -19,49 +19,49 @@ public class ArticleService {
     this.articleRepository = articleRepository;
   }
 
-  private List<Article> findByHeadlineAndYear(String headline, int year) {
-    return articleRepository.findByHeadlineAndYear(headline, year);
-  }
-
   public ArticleDTO add(ArticleDTO dto) {
-    List<Article> existing = findByHeadlineAndYear(
-      dto.main().getHeadline(), dto.header().getYear());
+    List<Article> existing = articleRepository.findByHeadlineAndYear(
+      dto.main().getHeadline(), dto.header().getYear()
+    );
     if(existing.size() > 0) {
       throw new AlreadySubmittedException(
-        "The article has already been posted. Please get previous one.");
+        "The article has already been posted. Please get by articleId: "
+          + existing.get(0).getArticleId()
+      );
     }
-    Article article = articleRepository.save(new Article(dto));
+    String articleId = dto.generateId();
+    Article article = articleRepository.save(new Article(dto, articleId));
     return new ArticleDTO(article);
   }
 
-  public ArticleDTO getByHeadlineAndYear(String headline, int year) {
-    List<Article> existing = findByHeadlineAndYear(headline, year);
-    int size = existing.size();
-    if(size > 1) {
-      throw new ConflictException(
-        "Server error: More than one article with the same headline " + headline + " and year " + year + "exists.");
-    } else {
-      try {
-        return new ArticleDTO(existing.get(0));
-      } catch(IndexOutOfBoundsException ex) {
-        throw new ArticleNotFoundException("No article with headline " + headline
-          + " and year" + year + " found. " +
-          "Please try again with different parameters.");
-      }
-    }
+  public ArticleDTO getByArticleId(String articleId) {
+    return new ArticleDTO(findByArticleId(articleId));
   }
 
-  public ArticleDTO getByArticleId(String articleId) {
-    List<Article> existing = articleRepository.findByArticleId(articleId);
+  public ArticleDTO edit(ArticleDTO articleDTO, String articleId) {
+    Article article = findByArticleId(articleId);
+    article.setHeader(articleDTO.header());
+    article.setMain(articleDTO.main());
+    article.setImage(articleDTO.image());
+    Article savedArticle = articleRepository.save(article);
+    return new ArticleDTO(savedArticle);
+  }
+
+  public void removeArticle(String articleId) {
+    Article article = findByArticleId(articleId);
+    articleRepository.delete(article);
+  }
+
+  private Article findByArticleId(String articleId) {
+    var existing = articleRepository.findByArticleId(articleId);
     if(existing.size() > 1) {
-      throw new ConflictException("Server error: Multiple articles with same id");
+      throw new ConflictException(
+        "Server error: More than one article with the arguments exists.");
     } else {
       try {
-        return new ArticleDTO(existing.get(0));
+        return existing.get(0);
       } catch(IndexOutOfBoundsException ex) {
-        throw new ArticleNotFoundException("No article with articleId" +
-          articleId + " was found. Please try again with different articleId."
-        );
+        throw new ArticleNotFoundException("No article with the arguments was found.");
       }
     }
   }

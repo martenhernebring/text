@@ -1,8 +1,13 @@
 package se.epochtimes.backend.text.model.image;
 
-import se.epochtimes.backend.text.model.wrap.Image;
-
 public class ImageComponent {
-  public ImageComponent(Image image, String bildtext, String bildkredit) {
+  private final Image image;
+  private final String text;
+  private final String credit;
+
+  public ImageComponent(Image image, String text, String credit) {
+    this.image = image;
+    this.text = text;
+    this.credit = credit;
   }
 }

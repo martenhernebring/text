@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model.text;
+package se.epochtimes.backend.text.deprecated.text;
 
 import java.util.ArrayList;
 import java.util.Collections;

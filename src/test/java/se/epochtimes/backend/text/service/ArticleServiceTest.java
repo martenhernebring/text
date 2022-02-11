@@ -10,20 +10,19 @@ import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.exception.AlreadySubmittedException;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
-import se.epochtimes.backend.text.model.Subject;
+import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.image.ImageComponent;
 import se.epochtimes.backend.text.model.main.MainComponent;
-import se.epochtimes.backend.text.model.wrap.Article;
-import se.epochtimes.backend.text.model.wrap.Image;
+import se.epochtimes.backend.text.model.Article;
+import se.epochtimes.backend.text.model.image.Image;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ArticleServiceTest {
@@ -43,13 +42,12 @@ public class ArticleServiceTest {
 
   @BeforeEach
   void setUp() {
-    header = new HeaderComponent(Subject.EKONOMI, 2022);
+    header = new HeaderComponent(Subject.EKONOMI, 2022, "Vignette");
     main = new MainComponent("headline");
     image = new ImageComponent(new Image(), "Bildtext", "Bildkredit");
     articleDTO = new ArticleDTO(header, main, image);
     articleId = "inreko1234";
-    article = new Article(articleDTO);
-    article.setArticleId(articleId);
+    article = new Article(articleDTO, articleId);
   }
 
   @Test
@@ -78,63 +76,55 @@ public class ArticleServiceTest {
   }
 
   @Test
-  void tryToFindNonExistingByNameAndYearIsNotLegal() {
-    when(mockedArticleRepository
-      .findByHeadlineAndYear(any(String.class), any(int.class))
-    ).thenReturn(new ArrayList<>());
-    assertThrows(ArticleNotFoundException.class, () -> articleServiceTest.
-      getByHeadlineAndYear(main.getHeadline(), header.getYear()));
-  }
-
-  @Test
   void tryToFindNonExistingByArticleIdIsNotLegal() {
     when(mockedArticleRepository.findByArticleId(any(String.class))
     ).thenReturn(new ArrayList<>());
     assertThrows(ArticleNotFoundException.class, () -> articleServiceTest.
-      getByArticleId(articleId));
-  }
-
-  @Test
-  void doubleWithSameHeadlineAndYearIsAServerError() {
-    when(mockedArticleRepository
-      .findByHeadlineAndYear(any(String.class), any(int.class))
-    ).thenReturn(List.of(article, new Article(articleDTO)));
-    assertThrows(ConflictException.class, () -> articleServiceTest
-      .getByHeadlineAndYear(main.getHeadline(), header.getYear()));
+      edit(articleDTO, articleId));
   }
 
   @Test
   void doubleWithSameArticleIdIsAServerError() {
     when(mockedArticleRepository.findByArticleId(any(String.class))
-    ).thenReturn(List.of(article, new Article(articleDTO)));
+    ).thenReturn(List.of(article, article));
     assertThrows(ConflictException.class, () -> articleServiceTest
-      .getByArticleId(articleId));
+      .removeArticle(articleId));
   }
 
   @Test
   void saveArticle() {
-    Article article = new Article(articleDTO);
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.add(articleDTO);
     assertEquals(articleDTO, result);
   }
 
-  @Test
-  void findArticleByNameAndYear() {
-    when(mockedArticleRepository
-      .findByHeadlineAndYear(any(String.class), any(int.class))
-    ).thenReturn(List.of(new Article(articleDTO)));
-    ArticleDTO existing = articleServiceTest
-      .getByHeadlineAndYear(main.getHeadline(), header.getYear());
-    assertNotNull(existing);
+  void mockOneArticleSaved() {
+    when(mockedArticleRepository.findByArticleId(any(String.class))
+    ).thenReturn(List.of(article));
   }
 
   @Test
-  void getByArticleId() {
-    when(mockedArticleRepository.findByArticleId(articleId.toLowerCase())
-    ).thenReturn(List.of(article));
+  void getArticle() {
+    mockOneArticleSaved();
     ArticleDTO result = articleServiceTest.getByArticleId(articleId);
     assertEquals(articleDTO, result);
+  }
+
+  @Test
+  void editArticle() {
+    mockOneArticleSaved();
+    articleDTO.main().setLead("New lead");
+    article.setMain(articleDTO.main());
+    when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
+    ArticleDTO result = articleServiceTest.edit(articleDTO, articleId);
+    assertEquals(articleDTO.main().getLead(), result.main().getLead());
+  }
+
+  @Test
+  void deleteArticle() {
+    mockOneArticleSaved();
+    articleServiceTest.removeArticle(articleId);
+    verify(mockedArticleRepository, times(1)).delete(article);
   }
 
 }

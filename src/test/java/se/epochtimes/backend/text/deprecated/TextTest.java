@@ -1,8 +1,8 @@
-package se.epochtimes.backend.text.model;
+package se.epochtimes.backend.text.deprecated;
 
 import org.junit.jupiter.api.Test;
-import se.epochtimes.backend.text.model.text.Text;
-import se.epochtimes.backend.text.model.text.StringListSingleton;
+import se.epochtimes.backend.text.deprecated.text.Text;
+import se.epochtimes.backend.text.deprecated.text.StringListSingleton;
 
 import java.util.List;
 
@@ -35,7 +35,9 @@ public class TextTest {
   }
 
   @Test
-  void hasEmptyConstructor() {
-    new Text();
+  void hasEmptyConstructorAndId() {
+    Text text = new Text();
+    text.setId(0L);
+    assertEquals(0L, text.getId());
   }
 }

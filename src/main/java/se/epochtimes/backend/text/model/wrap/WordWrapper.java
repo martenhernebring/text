@@ -90,7 +90,7 @@ public class WordWrapper {
 
   private void addWhiteSpaceDistance() {
     lineWidth++;
-    if(!currentWord.isBig(max))
+    if(currentWord.isNotBig(max))
       addWhiteSpaceSmallWord();
     else
       addWhiteSpaceBigWord();
@@ -115,7 +115,7 @@ public class WordWrapper {
   }
 
   private void addWord() {
-    if (!currentWord.isBig(max) && (!bisect || isNotBisectable()))
+    if (currentWord.isNotBig(max) && (!bisect || isNotBisectable()))
       sb.append(currentWord);
     else {
       bisect();
