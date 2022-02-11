@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import se.epochtimes.backend.text.model.header.Subject;
-import se.epochtimes.backend.text.service.TextService;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ComponentScan(basePackages = "se.epochtimes.backend.text.deprecated")
-@WebMvcTest
+@WebMvcTest(TextController.class)
 @AutoConfigureMockMvc
 public class TextControllerTest {
   @MockBean

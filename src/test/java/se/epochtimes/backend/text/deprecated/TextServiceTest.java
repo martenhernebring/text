@@ -6,12 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.epochtimes.backend.text.deprecated.TextDTO;
 import se.epochtimes.backend.text.deprecated.text.StringListSingleton;
 import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.deprecated.text.Text;
-import se.epochtimes.backend.text.deprecated.TextRepository;
-import se.epochtimes.backend.text.service.TextService;
 
 import java.util.ArrayList;
 

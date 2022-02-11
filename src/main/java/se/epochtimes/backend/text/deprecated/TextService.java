@@ -1,14 +1,12 @@
-package se.epochtimes.backend.text.service;
+package se.epochtimes.backend.text.deprecated;
 
 import org.springframework.stereotype.Service;
-import se.epochtimes.backend.text.deprecated.TextDTO;
 import se.epochtimes.backend.text.deprecated.text.Text;
-import se.epochtimes.backend.text.deprecated.TextRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("textService")
 public class TextService {
 
   private final TextRepository textRepository;

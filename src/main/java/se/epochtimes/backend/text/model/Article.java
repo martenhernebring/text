@@ -5,11 +5,10 @@ import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.image.ImageComponent;
 import se.epochtimes.backend.text.model.main.MainComponent;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "newspaperarticle")
 public class Article {
 
   @Id
@@ -19,40 +18,37 @@ public class Article {
   private HeaderComponent headerComponent;
   private MainComponent mainComponent;
   private ImageComponent imageComponent;
-  private final String articleId;
 
-  public Article(ArticleDTO dto, String articleId) {
+  public Article(ArticleDTO dto) {
     headerComponent = dto.header();
     mainComponent = dto.main();
     imageComponent = dto.image();
-    this.articleId = articleId;
   }
 
-  public HeaderComponent getHeader() {
+  public HeaderComponent getHeaderComponent() {
     return this.headerComponent;
   }
 
-  public MainComponent getMain() {
+  public MainComponent getMainComponent() {
     return this.mainComponent;
   }
 
-  public ImageComponent getImage() {
+  public ImageComponent getImageComponent() {
     return this.imageComponent;
   }
 
-  public String getArticleId() {
-    return articleId;
-  }
-
-  public void setHeader(HeaderComponent header) {
+  public void setHeaderComponent(HeaderComponent header) {
     this.headerComponent = header;
   }
 
-  public void setMain(MainComponent main) {
+  public void setMainComponent(MainComponent main) {
     this.mainComponent = main;
   }
 
-  public void setImage(ImageComponent image) {
+  public void setImageComponent(ImageComponent image) {
     this.imageComponent = image;
   }
+
+  //for jpa
+  public Article() {}
 }

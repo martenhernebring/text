@@ -1,4 +1,6 @@
 package se.epochtimes.backend.text.model.image;
 
-public record Image() {
+import java.io.Serializable;
+
+public record Image() implements Serializable {
 }
