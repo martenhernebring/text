@@ -18,14 +18,10 @@ public class HeaderComponent implements Serializable {
   public HeaderComponent() {}
 
   public HeaderComponent(Subject subject, int year, String vignette, String articleId) {
-    this.subject = subject;
-    this.year = year;
-    this.vignette = vignette;
-    if(articleId.isEmpty()) {
-      this.articleId = generateId();
-    } else {
-      this.articleId = articleId;
-    }
+    setSubject(subject);
+    setYear(year);
+    setVignette(vignette);
+    setArticleId(articleId);
   }
 
   private static String generateId() {
@@ -57,10 +53,14 @@ public class HeaderComponent implements Serializable {
   }
 
   public void setVignette(String vignette) {
-    this.vignette = vignette;
+    this.vignette = vignette.toLowerCase();
   }
 
   public void setArticleId(String articleId) {
-    this.articleId = articleId;
+    if(!articleId.isEmpty()) {
+      this.articleId = articleId;
+    } else {
+      this.articleId = generateId();
+    }
   }
 }

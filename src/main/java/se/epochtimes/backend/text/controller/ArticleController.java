@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
+import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.service.ArticleService;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class ArticleController {
     content = @Content(mediaType = "application/json",
     schema = @Schema(implementation = ArticleDTO.class))),
     @ApiResponse(responseCode = "400", description =
-        "Unquoted character -> \\, New line -> \\n, Subject -> EKONOMI",
+        "Unquoted character ->\\ and \", New line -> \\n, Subject -> EKONOMI",
       content = @Content),
     @ApiResponse(responseCode = "409",
       description = "Headline and lead has already been posted.",
@@ -61,13 +62,29 @@ public class ArticleController {
   /**
    * @param header Article subject, year, vignette and id
    */
-  @Operation(summary = "Delete an employee.")
+  @Operation(summary = "Delete an article.")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully deleted the employee", content = @Content)
+    @ApiResponse(responseCode = "200", description = "Successfully deleted the article", content = @Content)
   })
   @RequestMapping(value = "", method = RequestMethod.DELETE)
   public void deleteArticle(@RequestBody HeaderComponent header) {
     articleService.removeArticle(header);
+  }
+
+  /**
+   * @return Matching article
+   */
+  @Operation(summary = "Get article based on header.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the article.",
+      content = @Content(mediaType = "application/json",
+        schema = @Schema(implementation = ArticleDTO.class))),
+  })
+  @RequestMapping(value = "/inrikes/2022/ekonomi/{articleId}", method = RequestMethod.GET)
+  public ArticleDTO getArticleByHeader(@PathVariable String articleId) {
+    return articleService.getByHeader(
+      new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId)
+    );
   }
 
 }

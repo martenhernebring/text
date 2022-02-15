@@ -56,7 +56,7 @@ public class ArticleControllerTest {
 
   @BeforeEach
   void setUp() {
-    hc = new HeaderComponent(Subject.EKONOMI, 2022, "Vignette", "");
+    hc = new HeaderComponent(Subject.EKONOMI, 2022, "Inrikes", "");
     dto = new ArticleDTO(hc, new MainComponent("headline", "lead"),
       new ImageComponent(new Image(), "Bildtext", "Bildkredit")
     );
@@ -122,4 +122,20 @@ public class ArticleControllerTest {
       .contentType(MediaType.APPLICATION_JSON)
     ).andExpect(status().isNotFound()).andReturn();
   }
+
+  @Test
+  void getOne() throws Exception {
+    when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(dto);
+    MvcResult mvcResult = mockMvc
+      .perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
+        + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
+      ).andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+      .andReturn();
+
+    String actualResponseJson = mvcResult.getResponse().getContentAsString();
+    String expectedResultJson = objectMapper.writeValueAsString(dto);
+    assertEquals(expectedResultJson, actualResponseJson);
+  }
+
+
 }
