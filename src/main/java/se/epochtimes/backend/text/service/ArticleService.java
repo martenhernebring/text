@@ -6,6 +6,7 @@ import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
+import se.epochtimes.backend.text.model.main.MainComponent;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.List;
@@ -21,7 +22,9 @@ public class ArticleService {
   }
 
   public ArticleDTO add(ArticleDTO dto) {
-    List<Article> existing = articleRepository.findByMain(dto.main());
+    List<Article> existing = articleRepository.findByMain(
+      new MainComponent(dto.getHeadline(), dto.getLead())
+    );
     if(existing.size() > 0) {
       throw new ConflictException(
         "The article has already been posted. Please get by following header: "
@@ -37,10 +40,10 @@ public class ArticleService {
   }
 
   public ArticleDTO edit(ArticleDTO articleDTO) {
-    Article article = findByHeader(articleDTO.header());
-    article.setHeaderComponent(articleDTO.header());
-    article.setMainComponent(articleDTO.main());
-    article.setImageComponent(articleDTO.image());
+    Article article = findByHeader(articleDTO.getHeader());
+    article.setMainComponent(
+      new MainComponent(articleDTO.getHeadline(), articleDTO.getLead())
+    );
     Article savedArticle = articleRepository.save(article);
     return new ArticleDTO(savedArticle);
   }

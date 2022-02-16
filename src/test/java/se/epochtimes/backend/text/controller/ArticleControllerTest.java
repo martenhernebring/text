@@ -19,9 +19,6 @@ import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.header.Subject;
-import se.epochtimes.backend.text.model.image.Image;
-import se.epochtimes.backend.text.model.image.ImageComponent;
-import se.epochtimes.backend.text.model.main.MainComponent;
 import se.epochtimes.backend.text.service.ArticleService;
 
 import java.util.ArrayList;
@@ -40,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ArticleController.class)
 @AutoConfigureMockMvc
 public class ArticleControllerTest {
+
   @MockBean
   private ArticleService mockedService;
 
@@ -57,9 +55,7 @@ public class ArticleControllerTest {
   @BeforeEach
   void setUp() {
     hc = new HeaderComponent(Subject.EKONOMI, 2022, "Inrikes", "");
-    dto = new ArticleDTO(hc, new MainComponent("headline", "lead"),
-      new ImageComponent(new Image(), "Bildtext", "Bildkredit")
-    );
+    dto = new ArticleDTO(hc, "headline", "lead");
   }
 
   @Test
@@ -74,8 +70,9 @@ public class ArticleControllerTest {
       .getResponse()
       .getContentAsString();
 
-    assertTrue(aRJ.substring(aRJ.indexOf("\"articleId\":\"") + 13,
-      aRJ.indexOf("\"},\"main\"")).matches("[0-9]{4}"));
+    String p = "\"articleId\":\"";
+    assertTrue(aRJ.substring(aRJ.indexOf(p) + p.length(),
+      aRJ.indexOf("\"},\"headline\"")).matches("[0-9]{4}"));
   }
 
   @Test

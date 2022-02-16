@@ -11,10 +11,8 @@ import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.image.ImageComponent;
 import se.epochtimes.backend.text.model.main.MainComponent;
 import se.epochtimes.backend.text.model.Article;
-import se.epochtimes.backend.text.model.image.Image;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.ArrayList;
@@ -33,36 +31,32 @@ public class ArticleServiceTest {
   private ArticleService articleServiceTest;
 
   private HeaderComponent header;
-  private MainComponent main;
-  private ImageComponent image;
-  private ArticleDTO articleDTO;
+  private ArticleDTO dto;
   private Article article;
 
   @BeforeEach
   void setUp() {
     header = new HeaderComponent(Subject.EKONOMI, 2022, "Vignette", "");
-    main = new MainComponent("headline", "lead");
-    image = new ImageComponent(new Image(), "Bildtext", "Bildkredit");
-    articleDTO = new ArticleDTO(header, main, image);
-    article = new Article(articleDTO);
+    dto = new ArticleDTO(header, "headline", "lead");
+    article = new Article(dto);
   }
 
   @Test
   void nullHeaderIsNotLegal() {
     assertThrows(NullPointerException.class, () -> articleServiceTest.add(
-      new ArticleDTO(null, main, image)));
+      new ArticleDTO(null, dto.getHeadline(), dto.getLead())));
   }
 
   @Test
   void nullMainIsNotLegal() {
     assertThrows(NullPointerException.class, () -> articleServiceTest.add(
-      new ArticleDTO(header, null, image)));
+      new ArticleDTO(header, null, dto.getLead())));
   }
 
   @Test
   void nullImageIsNotLegal() {
     assertThrows(NullPointerException.class, () -> articleServiceTest.add(
-      new ArticleDTO(header, main, null)));
+      new ArticleDTO(header, dto.getHeadline(), null)));
   }
 
   @Test
@@ -70,7 +64,7 @@ public class ArticleServiceTest {
     when(mockedArticleRepository.findByMain(any(MainComponent.class))
     ).thenReturn(List.of(article));
     assertThrows(ConflictException.class, () ->
-      articleServiceTest.add(articleDTO));
+      articleServiceTest.add(dto));
   }
 
   @Test
@@ -78,7 +72,7 @@ public class ArticleServiceTest {
     when(mockedArticleRepository.findByHeader(any(HeaderComponent.class))
     ).thenReturn(new ArrayList<>());
     assertThrows(ArticleNotFoundException.class, () ->
-      articleServiceTest.edit(articleDTO));
+      articleServiceTest.edit(dto));
   }
 
   @Test
@@ -92,8 +86,8 @@ public class ArticleServiceTest {
   @Test
   void saveArticle() {
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
-    ArticleDTO result = articleServiceTest.add(articleDTO);
-    assertEquals(articleDTO, result);
+    ArticleDTO result = articleServiceTest.add(dto);
+    assertEquals(dto, result);
   }
 
   void stubOneArticleSaved() {
@@ -105,17 +99,20 @@ public class ArticleServiceTest {
   void getArticle() {
     stubOneArticleSaved();
     ArticleDTO result = articleServiceTest.getByHeader(header);
-    assertEquals(articleDTO, result);
+    assertEquals(dto, result);
   }
 
   @Test
   void editArticle() {
     stubOneArticleSaved();
-    articleDTO.main().setLead("New lead");
-    article.setMainComponent(articleDTO.main());
+    MainComponent mainComp = new MainComponent(dto.getHeadline(), dto.getLead());
+    final String newLead = "New lead";
+    dto.setLead(newLead);
+    mainComp.setLead(newLead);
+    article.setMainComponent(mainComp);
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
-    ArticleDTO result = articleServiceTest.edit(articleDTO);
-    assertEquals(articleDTO.main().getLead(), result.main().getLead());
+    ArticleDTO result = articleServiceTest.edit(dto);
+    assertEquals(dto.getLead(), result.getLead());
   }
 
   @Test
@@ -129,7 +126,7 @@ public class ArticleServiceTest {
   void getAllArticles() {
     doReturn(List.of(article)).when(mockedArticleRepository).findAll();
     List<ArticleDTO> result = articleServiceTest.getAllUnsorted();
-    assertEquals(articleDTO, result.get(0));
+    assertEquals(dto, result.get(0));
   }
 
 }
