@@ -135,23 +135,6 @@ public class WordWrapperTest {
   }
 
   @Test
-  void temp() {
-    WordWrapper ww = new WordWrapper(
-      "Regeringen föreslår att det ska bli tydligare krav och skärpta " +
-        "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
-        "Bland annat handlar det om en noggrannare kontroll av huvudmännen.",
-      Format.LEAD);
-    assertThat(join(ww.wrapWords()), is("" +
-      "Regeringen föreslår att det" + NL +
-      "ska bli tydligare krav och" + NL +
-      "skärpta regler för religiösa" + NL +
-      "inslag i förskolor, skolor" + NL +
-      "och fritidshem. Bland annat" + NL +
-      "handlar det om en noggrannare" + NL +
-      "kontroll av huvudmännen." + NL));
-  }
-
-  @Test
   void body1() {
     assertThat(paragraphInsert("I slutet av 2021 fanns drygt 391 000 " +
       "personer registrerade hos Kronofogden. Det rör sig om en minskning " +

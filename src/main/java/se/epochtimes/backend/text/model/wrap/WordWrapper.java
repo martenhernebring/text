@@ -55,10 +55,10 @@ public class WordWrapper {
     lineWidth = 0;
     for(Word word: words)
       append(word);
-    lines.add(sb.toString());
-    sb.setLength(0);
+    addLine();
     ImmutablePair<Integer, String> l = findLongest();
-    updateIfNecessary(l);
+    if (l.getLeft() < (lines.size() - 1))
+      updateIfNecessary(l);
     return lines;
   }
 
@@ -107,8 +107,7 @@ public class WordWrapper {
 
   private void addWhiteSpaceSmallWord() {
     if ((!bisect || isNotBisectable()) && isLong()) {
-      lines.add(sb.toString());
-      sb.setLength(0);
+      addLine();
       lineWidth = currentWord.getLength();
     } else
       sb.append(" ");
@@ -118,8 +117,7 @@ public class WordWrapper {
     if(!isHuge())
       sb.append(" ");
     else {
-      lines.add(sb.toString());
-      sb.setLength(0);
+      addLine();
     }
   }
 
@@ -133,8 +131,7 @@ public class WordWrapper {
 
   private void bisect() {
     sb.append(currentWord.bisectFirstHalf());
-    lines.add(sb.toString());
-    sb.setLength(0);
+    addLine();
     String leftOver = currentWord.getSecondHalf();
     sb.append(leftOver);
     lineWidth = leftOver.length();
@@ -154,17 +151,20 @@ public class WordWrapper {
 
   private void updateIfNecessary(ImmutablePair<Integer, String> longest) {
     int li = longest.getLeft();
+    String next = lines.get(li + 1);
+    String[] w = longest.getRight().split(" ");
+    String last = w[w.length - 1];
+    int proposal = next.length() + last.length();
     String ls = longest.getRight();
-    if (li < (lines.size() - 1)) {
-      String[] w = ls.split(" ");
-      String next = lines.get(li + 1);
-      String lw = w[w.length - 1];
-      int proposal = next.length() + lw.length();
-      if(proposal <= max && proposal < ls.length()) {
-        lines.set(li, ls.substring(0, ls.length() - lw.length() - 1));
-        lines.set(li + 1, ls.substring(ls.length() - lw.length()) + " " + next);
-      }
+    if(proposal <= max && proposal < ls.length()) {
+      lines.set(li, ls.substring(0, ls.length() - last.length() - 1));
+      lines.set(li + 1, ls.substring(ls.length() - last.length()) + " " + next);
     }
+  }
+
+  private void addLine() {
+    lines.add(sb.toString());
+    sb.setLength(0);
   }
 
   private boolean isLong() {

@@ -40,7 +40,11 @@ public class ArticleServiceTest {
   @BeforeEach
   void setUp() {
     header = new HeaderComponent(Subject.EKONOMI, 2022, "Vignette", "");
-    dto = new ArticleDTO(header, "headline", "lead");
+    final String hl = "Kronofogden: De samlade skulderna större än någonsin";
+    final String lead = "Antalet svenskar som har skulder hos Kronofogden " +
+      "är det lägsta på 30 år. Däremot är det samlade skuldberget större än " +
+      "någonsin och växer snabbt. Det visar ny statistik från myndigheten.";
+    dto = new ArticleDTO(header, hl, lead);
     article = new Article(dto);
   }
 
@@ -88,9 +92,6 @@ public class ArticleServiceTest {
 
   @Test
   void saveHeadlineFormatted() {
-    final String raw = "Kronofogden: De samlade skulderna större än någonsin";
-    dto.setHeadline(raw);
-    article = new Article(dto);
     String formatted = "Kronofogden:" + NL + "De samlade" + NL +
       "skulderna" + NL + "större än" + NL + "någonsin" + NL;
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
@@ -100,13 +101,6 @@ public class ArticleServiceTest {
   }
 
   void stubOneArticleSaved() {
-    final String hl = "Kronofogden: De samlade skulderna större än någonsin";
-    final String lead = "Antalet svenskar som har skulder hos Kronofogden " +
-      "är det lägsta på 30 år. Däremot är det samlade skuldberget större än " +
-      "någonsin och växer snabbt. Det visar ny statistik från myndigheten.";
-    dto.setHeadline(hl);
-    dto.setLead(lead);
-    article = new Article(dto);
     doReturn(List.of(article)).when(mockedArticleRepository)
       .findByHeader(any(HeaderComponent.class));
   }
@@ -130,12 +124,12 @@ public class ArticleServiceTest {
   @Test
   void editArticle() {
     stubOneArticleSaved();
-    MainComponent mainComp = new MainComponent(dto.getHeadline(), dto.getLead());
     final String newLead =
       "Regeringen föreslår att det ska bli tydligare krav och skärpta " +
       "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
       "Bland annat handlar det om en noggrannare kontroll av huvudmännen.";
     dto.setLead(newLead);
+    MainComponent mainComp = new MainComponent(dto.getHeadline(), dto.getLead());
     final String formattedNewLead = "" +
       "Regeringen föreslår att det" + NL +
       "ska bli tydligare krav och" + NL +
@@ -161,13 +155,6 @@ public class ArticleServiceTest {
 
   @Test
   void getAllArticles() {
-    final String hl = "Kronofogden: De samlade skulderna större än någonsin";
-    final String lead = "Antalet svenskar som har skulder hos Kronofogden " +
-      "är det lägsta på 30 år. Däremot är det samlade skuldberget större än " +
-      "någonsin och växer snabbt. Det visar ny statistik från myndigheten.";
-    dto.setHeadline(hl);
-    dto.setLead(lead);
-    article = new Article(dto);
     doReturn(List.of(article)).when(mockedArticleRepository).findAll();
     List<ArticleDTO> result = articleServiceTest.getAllUnsorted();
     assertEquals(new ArticleDTO(article), result.get(0));
