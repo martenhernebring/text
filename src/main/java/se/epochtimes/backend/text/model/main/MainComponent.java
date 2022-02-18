@@ -3,7 +3,7 @@ package se.epochtimes.backend.text.model.main;
 import java.io.Serializable;
 
 public class MainComponent implements Serializable {
-  private final String headline;
+  private String headline;
   private String lead;
 
   public MainComponent(String headline, String lead) {
@@ -19,5 +19,9 @@ public class MainComponent implements Serializable {
 
   public void setLead(String lead) {
     this.lead = lead;
+  }
+
+  public void setHeadline(String headline) {
+    this.headline = headline;
   }
 }

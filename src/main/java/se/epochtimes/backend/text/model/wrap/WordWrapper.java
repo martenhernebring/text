@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class WordWrapper {
 
@@ -39,6 +40,14 @@ public class WordWrapper {
   public WordWrapper(String raw, Format format, int startingSpaces) {
     this(raw, format);
     this.startingSpaces = startingSpaces;
+  }
+
+  public static String join(List<String> lines) {
+    StringJoiner joiner = new StringJoiner(NL, "", NL);
+    for (String el : lines) {
+      joiner.add(el);
+    }
+    return joiner.toString();
   }
 
   public List<String> wrapWords() {

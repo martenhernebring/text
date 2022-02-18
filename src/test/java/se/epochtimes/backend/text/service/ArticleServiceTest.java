@@ -9,17 +9,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
-import se.epochtimes.backend.text.model.header.Subject;
-import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.main.MainComponent;
 import se.epochtimes.backend.text.model.Article;
+import se.epochtimes.backend.text.model.header.HeaderComponent;
+import se.epochtimes.backend.text.model.header.Subject;
+import se.epochtimes.backend.text.model.main.MainComponent;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static se.epochtimes.backend.text.model.wrap.WordWrapper.NL;
 
 @ExtendWith(MockitoExtension.class)
 public class ArticleServiceTest {
@@ -84,35 +87,69 @@ public class ArticleServiceTest {
   }
 
   @Test
-  void saveArticle() {
+  void saveHeadlineFormatted() {
+    final String raw = "Kronofogden: De samlade skulderna större än någonsin";
+    dto.setHeadline(raw);
+    article = new Article(dto);
+    String formatted = "Kronofogden:" + NL + "De samlade" + NL +
+      "skulderna" + NL + "större än" + NL + "någonsin" + NL;
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.add(dto);
-    assertEquals(dto, result);
+    assertThat(result.getHeadline(), is(formatted));
+    assertTrue(dto.hashCode() != result.hashCode() );
   }
 
   void stubOneArticleSaved() {
+    final String hl = "Kronofogden: De samlade skulderna större än någonsin";
+    final String lead = "Antalet svenskar som har skulder hos Kronofogden " +
+      "är det lägsta på 30 år. Däremot är det samlade skuldberget större än " +
+      "någonsin och växer snabbt. Det visar ny statistik från myndigheten.";
+    dto.setHeadline(hl);
+    dto.setLead(lead);
+    article = new Article(dto);
     doReturn(List.of(article)).when(mockedArticleRepository)
       .findByHeader(any(HeaderComponent.class));
   }
 
   @Test
-  void getArticle() {
+  void getLeadFormatted() {
     stubOneArticleSaved();
+    String formatted = "" +
+      "Antalet svenskar som har" + NL +
+      "skulder hos Kronofogden är det" + NL +
+      "lägsta på 30 år. Däremot är" + NL +
+      "det samlade skuldberget större" + NL +
+      "än någonsin och växer snabbt." + NL +
+      "Det visar ny statistik från" + NL +
+      "myndigheten." + NL;
     ArticleDTO result = articleServiceTest.getByHeader(header);
-    assertEquals(dto, result);
+    assertEquals(result.getLead(), formatted);
+    assertNotEquals(dto, result);
   }
 
   @Test
   void editArticle() {
     stubOneArticleSaved();
     MainComponent mainComp = new MainComponent(dto.getHeadline(), dto.getLead());
-    final String newLead = "New lead";
+    final String newLead =
+      "Regeringen föreslår att det ska bli tydligare krav och skärpta " +
+      "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
+      "Bland annat handlar det om en noggrannare kontroll av huvudmännen.";
     dto.setLead(newLead);
-    mainComp.setLead(newLead);
+    final String formattedNewLead = "" +
+      "Regeringen föreslår att det" + NL +
+      "ska bli tydligare krav och" + NL +
+      "skärpta regler för religiösa" + NL +
+      "inslag i förskolor, skolor" + NL +
+      "och fritidshem. Bland annat" + NL +
+      "handlar det om en noggrannare" + NL +
+      "kontroll av huvudmännen." + NL;
+    mainComp.setLead(formattedNewLead);
     article.setMainComponent(mainComp);
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
-    assertEquals(dto.getLead(), result.getLead());
+    assertEquals(formattedNewLead, result.getLead());
+    assertNotEquals(dto.getLead(), result.getLead());
   }
 
   @Test
@@ -124,9 +161,17 @@ public class ArticleServiceTest {
 
   @Test
   void getAllArticles() {
+    final String hl = "Kronofogden: De samlade skulderna större än någonsin";
+    final String lead = "Antalet svenskar som har skulder hos Kronofogden " +
+      "är det lägsta på 30 år. Däremot är det samlade skuldberget större än " +
+      "någonsin och växer snabbt. Det visar ny statistik från myndigheten.";
+    dto.setHeadline(hl);
+    dto.setLead(lead);
+    article = new Article(dto);
     doReturn(List.of(article)).when(mockedArticleRepository).findAll();
     List<ArticleDTO> result = articleServiceTest.getAllUnsorted();
-    assertEquals(dto, result.get(0));
+    assertEquals(new ArticleDTO(article), result.get(0));
+    assertNotEquals(dto, result.get(0));
   }
 
 }
