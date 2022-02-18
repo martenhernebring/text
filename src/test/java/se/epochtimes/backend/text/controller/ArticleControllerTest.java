@@ -50,20 +50,21 @@ public class ArticleControllerTest {
   private static final String BASE_URL = "/v1/articles";
 
   private HeaderComponent hc;
-  private ArticleDTO dto;
+  private ArticleDTO inputDTO, outputDTO;
 
   @BeforeEach
   void setUp() {
     hc = new HeaderComponent(Subject.EKONOMI, 2022, "Inrikes", "");
-    dto = new ArticleDTO(hc, "headline", "lead");
+    inputDTO = new ArticleDTO(hc, "headline", "lead", "support");
+    outputDTO = new ArticleDTO(hc, inputDTO.getHeadline(), inputDTO.getLead(), "   support");
   }
 
   @Test
   void postArticle() throws Exception {
-    when(mockedService.add(any(ArticleDTO.class))).thenReturn(dto);
+    when(mockedService.add(any(ArticleDTO.class))).thenReturn(outputDTO);
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-      .content(objectMapper.writeValueAsString(dto))
+      .content(objectMapper.writeValueAsString(inputDTO))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
       .andReturn()
@@ -72,7 +73,7 @@ public class ArticleControllerTest {
 
     String p = "\"articleId\":\"";
     assertTrue(aRJ.substring(aRJ.indexOf(p) + p.length(),
-      aRJ.indexOf("\"},\"headline\"")).matches("[0-9]{4}"));
+      aRJ.indexOf("\"},\"support\":\"")).matches("[0-9]{4}"));
   }
 
   @Test
@@ -81,7 +82,7 @@ public class ArticleControllerTest {
       .thenThrow(new ConflictException("The article has already been posted."));
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-        .content(objectMapper.writeValueAsString(dto))
+        .content(objectMapper.writeValueAsString(inputDTO))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.CONFLICT.value()));
   }
@@ -89,7 +90,7 @@ public class ArticleControllerTest {
   @Test
   void getAllUnsorted() throws Exception {
     final List<ArticleDTO> dtos = new ArrayList<>();
-    dtos.add(dto);
+    dtos.add(outputDTO);
     when(mockedService.getAllUnsorted()).thenReturn(dtos);
     MvcResult mvcResult = mockMvc
       .perform(get(BASE_URL))
@@ -122,7 +123,7 @@ public class ArticleControllerTest {
 
   @Test
   void getOne() throws Exception {
-    when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(dto);
+    when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(outputDTO);
     MvcResult mvcResult = mockMvc
       .perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
         + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
@@ -130,7 +131,7 @@ public class ArticleControllerTest {
       .andReturn();
 
     String actualResponseJson = mvcResult.getResponse().getContentAsString();
-    String expectedResultJson = objectMapper.writeValueAsString(dto);
+    String expectedResultJson = objectMapper.writeValueAsString(outputDTO);
     assertEquals(expectedResultJson, actualResponseJson);
   }
 

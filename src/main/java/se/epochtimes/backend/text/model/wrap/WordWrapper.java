@@ -1,6 +1,7 @@
 package se.epochtimes.backend.text.model.wrap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import se.epochtimes.backend.text.model.main.HeadlineComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,25 @@ public class WordWrapper {
   public WordWrapper(String raw, Format format, int startingSpaces) {
     this(raw, format);
     this.startingSpaces = startingSpaces;
+  }
+
+  public static HeadlineComponent format(HeadlineComponent main) {
+    WordWrapper ww = new WordWrapper(main.getHeadline(), Format.HEADLINE);
+    main.setHeadline(join(ww.wrapWords()));
+    ww = new WordWrapper(main.getLead(), Format.LEAD);
+    main.setLead(join(ww.wrapWords()));
+    return main;
+  }
+
+  public static String formatBody(String body) {
+    String[] paragraphs = body.trim().split("\\R+");
+    WordWrapper ww = new WordWrapper(paragraphs[0], Format.PARAGRAPH, 3);
+    paragraphs[0] = join(ww.wrapWordsWithBisect());
+    for(int i = 1; i < paragraphs.length; i++) {
+      ww = new WordWrapper(paragraphs[i], Format.PARAGRAPH, 2);
+      paragraphs[i] = join(ww.wrapWordsWithBisect());
+    }
+    return String.join("", paragraphs);
   }
 
   public static String join(List<String> lines) {

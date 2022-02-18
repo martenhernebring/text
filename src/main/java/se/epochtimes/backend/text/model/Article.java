@@ -2,8 +2,7 @@ package se.epochtimes.backend.text.model;
 
 import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.main.MainComponent;
-import se.epochtimes.backend.text.model.wrap.Format;
+import se.epochtimes.backend.text.model.main.HeadlineComponent;
 import se.epochtimes.backend.text.model.wrap.WordWrapper;
 
 import javax.persistence.*;
@@ -17,33 +16,40 @@ public class Article {
   @Column(name = "id", nullable = false)
   private Long id;
   private HeaderComponent headerComponent;
-  private MainComponent mainComponent;
+  private HeadlineComponent headlineComponent;
+  @Column(name = "body", length = 4096)
+  private String body;
 
   public Article(ArticleDTO dto) {
     headerComponent = dto.getHeader();
-    setMainComponent(new MainComponent(dto.getHeadline(), dto.getLead()));
+    setHeadlineComponent(new HeadlineComponent(dto.getHeadline(), dto.getLead()));
+    setBody(dto.getSupport());
   }
 
   public HeaderComponent getHeaderComponent() {
     return this.headerComponent;
   }
 
-  public MainComponent getMainComponent() {
-    return this.mainComponent;
+  public HeadlineComponent getHeadlineComponent() {
+    return this.headlineComponent;
   }
 
   public void setHeaderComponent(HeaderComponent header) {
     this.headerComponent = header;
   }
 
-  public void setMainComponent(MainComponent main) {
-    WordWrapper ww = new WordWrapper(main.getHeadline(), Format.HEADLINE);
-    main.setHeadline(WordWrapper.join(ww.wrapWords()));
-    ww = new WordWrapper(main.getLead(), Format.LEAD);
-    main.setLead(WordWrapper.join(ww.wrapWords()));
-    this.mainComponent = main;
+  public void setHeadlineComponent(HeadlineComponent main) {
+    this.headlineComponent = WordWrapper.format(main);
   }
 
   //for jpa
   public Article() {}
+
+  public String getBody() {
+    return body;
+  }
+
+  public void setBody(String body) {
+    this.body = WordWrapper.formatBody(body);
+  }
 }

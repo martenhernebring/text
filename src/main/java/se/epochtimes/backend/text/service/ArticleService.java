@@ -6,7 +6,7 @@ import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.main.MainComponent;
+import se.epochtimes.backend.text.model.main.HeadlineComponent;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.List;
@@ -22,8 +22,8 @@ public class ArticleService {
   }
 
   public ArticleDTO add(ArticleDTO dto) {
-    List<Article> existing = articleRepository.findByMain(
-      new MainComponent(dto.getHeadline(), dto.getLead())
+    List<Article> existing = articleRepository.findByHeadline (
+      new HeadlineComponent(dto.getHeadline(), dto.getLead())
     );
     if(existing.size() > 0) {
       throw new ConflictException(
@@ -41,8 +41,8 @@ public class ArticleService {
 
   public ArticleDTO edit(ArticleDTO articleDTO) {
     Article article = findByHeader(articleDTO.getHeader());
-    article.setMainComponent(
-      new MainComponent(articleDTO.getHeadline(), articleDTO.getLead())
+    article.setHeadlineComponent(
+      new HeadlineComponent(articleDTO.getHeadline(), articleDTO.getLead())
     );
     Article savedArticle = articleRepository.save(article);
     return new ArticleDTO(savedArticle);

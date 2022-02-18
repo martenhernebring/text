@@ -10,19 +10,22 @@ import java.io.Serializable;
 public class ArticleDTO implements Serializable {
 
   private final HeaderComponent header;
+  private String support;
   private String headline;
   private String lead;
 
-  public ArticleDTO(HeaderComponent header, String headline, String lead) {
+  public ArticleDTO(HeaderComponent header, String headline, String lead, String support) {
     this.header = header;
     this.headline = headline;
     this.lead = lead;
+    this.support = support;
   }
 
   public ArticleDTO(Article article) {
     this.header = article.getHeaderComponent();
-    this.headline = article.getMainComponent().getHeadline();
-    this.lead = article.getMainComponent().getLead();
+    this.headline = article.getHeadlineComponent().getHeadline();
+    this.lead = article.getHeadlineComponent().getLead();
+    this.support = article.getBody();
   }
 
   public HeaderComponent getHeader() {
@@ -43,6 +46,14 @@ public class ArticleDTO implements Serializable {
 
   public void setLead(String lead) {
     this.lead = lead;
+  }
+
+  public String getSupport() {
+    return support;
+  }
+
+  public void setSupport(String support) {
+    this.support = support;
   }
 
   @Override

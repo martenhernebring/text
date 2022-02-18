@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.main.MainComponent;
+import se.epochtimes.backend.text.model.main.HeadlineComponent;
 
 import java.util.List;
 
@@ -19,7 +19,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Param(value = "headerComponent") HeaderComponent headerComponent
   );
 
-  @Query(value = "SELECT * FROM newspaperarticle na WHERE na.main_component = ?1",
+  @Query(value = "SELECT * FROM newspaperarticle na WHERE na.headline_component = ?1",
     nativeQuery = true)
-  List<Article> findByMain(@Param(value = "mainComponent") MainComponent mainComponent);
+  List<Article> findByHeadline(
+    @Param(value = "headlineComponent") HeadlineComponent headlineComponent
+  );
 }
