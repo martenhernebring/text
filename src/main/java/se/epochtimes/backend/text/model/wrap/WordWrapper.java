@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 
 public class WordWrapper {
 
-  public static final String NL = System.lineSeparator();
+  public static final String NL = "\n";
   private int max;
 
   private final Word[] words;
@@ -53,10 +53,10 @@ public class WordWrapper {
 
   public static String formatBody(String body) {
     String[] paragraphs = body.trim().split("\\R+");
-    WordWrapper ww = new WordWrapper(paragraphs[0], Format.PARAGRAPH, 3);
+    WordWrapper ww = new WordWrapper(paragraphs[0], Format.DEFAULT, 3);
     paragraphs[0] = join(ww.wrapWordsWithBisect());
     for(int i = 1; i < paragraphs.length; i++) {
-      ww = new WordWrapper(paragraphs[i], Format.PARAGRAPH, 2);
+      ww = new WordWrapper(paragraphs[i], Format.DEFAULT, 2);
       paragraphs[i] = join(ww.wrapWordsWithBisect());
     }
     return String.join("", paragraphs);
