@@ -38,8 +38,8 @@ public class Article {
     this.headerComponent = header;
   }
 
-  public void setHeadlineComponent(HeadlineComponent main) {
-    this.headlineComponent = WordWrapper.format(main);
+  public void setHeadlineComponent(HeadlineComponent headline) {
+    this.headlineComponent = WordWrapper.format(headline);
   }
 
   //for jpa

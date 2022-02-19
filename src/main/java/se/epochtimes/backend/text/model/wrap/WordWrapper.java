@@ -53,10 +53,10 @@ public class WordWrapper {
 
   public static String formatBody(String body) {
     String[] paragraphs = body.trim().split("\\R+");
-    WordWrapper ww = new WordWrapper(paragraphs[0], Format.DEFAULT, 3);
+    WordWrapper ww = new WordWrapper(paragraphs[0], Format.PARAGRAPH, 3);
     paragraphs[0] = join(ww.wrapWordsWithBisect());
     for(int i = 1; i < paragraphs.length; i++) {
-      ww = new WordWrapper(paragraphs[i], Format.DEFAULT, 2);
+      ww = new WordWrapper(paragraphs[i], Format.PARAGRAPH, 2);
       paragraphs[i] = join(ww.wrapWordsWithBisect());
     }
     return String.join("", paragraphs);
@@ -70,18 +70,6 @@ public class WordWrapper {
     return joiner.toString();
   }
 
-  public List<String> wrapWords() {
-    lines = new ArrayList<>();
-    lineWidth = 0;
-    for(Word word: words)
-      append(word);
-    addLine();
-    ImmutablePair<Integer, String> l = findLongest();
-    if (l.getLeft() < (lines.size() - 1))
-      updateIfNecessary(l);
-    return lines;
-  }
-
   public List<String> wrapWordsWithBisect() {
     List<String> normal = wrapWords();
     int normalNewLines = normal.size();
@@ -92,6 +80,18 @@ public class WordWrapper {
       return bisected;
     else
       return normal;
+  }
+
+  public List<String> wrapWords() {
+    lines = new ArrayList<>();
+    lineWidth = 0;
+    for(Word word: words)
+      append(word);
+    addLine();
+    ImmutablePair<Integer, String> l = findLongest();
+    if (l.getLeft() < (lines.size() - 1))
+      updateIfNecessary(l);
+    return lines;
   }
 
   private void append(Word word) {
@@ -126,7 +126,7 @@ public class WordWrapper {
   }
 
   private void addWhiteSpaceSmallWord() {
-    if ((!bisect || isNotBisectable()) && isLong()) {
+    if (((!bisect || isNotBisectable()) || (lineWidth - currentWord.getLength()/2 >= max)) && isLong()) {
       addLine();
       lineWidth = currentWord.getLength();
     } else
@@ -196,6 +196,6 @@ public class WordWrapper {
   }
 
   private boolean isNotBisectable() {
-    return !isLong() || currentWord.getLength() <= 7 || currentWord.getIndex() >= (words.length - 1);
+    return !isLong() || currentWord.getLength() <= 14 || currentWord.getIndex() >= (words.length - 1);
   }
 }

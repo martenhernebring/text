@@ -10,6 +10,7 @@ import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
+import se.epochtimes.backend.text.model.WordWrapperTest;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.model.main.HeadlineComponent;
@@ -40,10 +41,8 @@ public class ArticleServiceTest {
   @BeforeEach
   void setUp() {
     header = new HeaderComponent(Subject.EKONOMI, 2022, "Vignette", "");
-    final String hl = "Kronofogden: De samlade skulderna större än någonsin";
-    final String lead = "Antalet svenskar som har skulder hos Kronofogden " +
-      "är det lägsta på 30 år. Däremot är det samlade skuldberget större än " +
-      "någonsin och växer snabbt. Det visar ny statistik från myndigheten.";
+    final String hl = WordWrapperTest.HEADLINE;
+    final String lead = WordWrapperTest.LEAD;
     final String support = """
       I samband med januariavtalet 2019 kom Socialdemokraterna överens med Miljöpartiet, Centerpartiet och Liberalerna om att utreda skärpta regler för så kallade konfessionella friskolor och ett stopp för nya religiösa friskolor.
       - Vi har sett exempel på att aktörer inom offentlig sektor har använt statliga och kommunala medel till antidemokratisk verksamhet. Av Säkerhetspolisens arbete och rapporter från bland annat Försvarshögskolan framgår det att det exempelvis har förekommit kopplingar mellan skolverksamhet och den våldsbejakande miljön. Så här kan vi inte ha det, säger skolminister Lina Axelsson Kihlblom (S) på en pressträff den 4 februari.
@@ -110,8 +109,7 @@ public class ArticleServiceTest {
 
   @Test
   void saveHeadlineFormatted() {
-    String formatted = "Kronofogden:" + NL + "De samlade" + NL +
-      "skulderna" + NL + "större än" + NL + "någonsin" + NL;
+    String formatted = WordWrapperTest.FORMATTED_HEADLINE;
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.add(dto);
     assertThat(result.getHeadline(), is(formatted));
@@ -126,14 +124,7 @@ public class ArticleServiceTest {
   @Test
   void getLeadFormatted() {
     stubOneArticleSaved();
-    String formatted = "" +
-      "Antalet svenskar som har" + NL +
-      "skulder hos Kronofogden är det" + NL +
-      "lägsta på 30 år. Däremot är" + NL +
-      "det samlade skuldberget större" + NL +
-      "än någonsin och växer snabbt." + NL +
-      "Det visar ny statistik från" + NL +
-      "myndigheten." + NL;
+    String formatted = WordWrapperTest.FORMATTED_LEAD;
     ArticleDTO result = articleServiceTest.getByHeader(header);
     assertEquals(result.getLead(), formatted);
     assertNotEquals(dto, result);
@@ -247,46 +238,47 @@ public class ArticleServiceTest {
       friskolor.
         - Vi har sett exempel på att
       aktörer inom offentlig sektor
-      har använt statliga och komm-
-      unala medel till antidemokratisk verks-
-      amhet. Av Säkerhetspolisens
+      har använt statliga och kommunala
+      medel till antidemokratisk
+      verksamhet. Av Säkerhetspolisens
       arbete och rapporter från bland
       annat Försvarshögskolan framgår
-      det att det exempelvis har förek-
-      ommit kopplingar mellan skolver-
-      ksamhet och den våldsbejakande
-      miljön. Så här kan vi inte ha
-      det, säger skolminister Lina Axel-
-      sson Kihlblom (S) på en press-
-      träff den 4 februari.
-        Lämplighetsprövningen av ensk-
-      ilda som ansöker om att bli huvu-
-      dmän inom skolväsendet föreslås
-      utökas med demokrativillkor. Reger-
-      ingen vill också att utrymmet
-      som finns för religiösa inslag i
-      skolan förtydligas. Detta så att
-      elever kan välja om de vill
-      delta eller ej.
+      det att det exempelvis har
+      förekommit kopplingar mellan
+      skolverksamhet och den
+      våldsbejakande miljön. Så här kan
+      vi inte ha det, säger
+      skolminister Lina Axelsson
+      Kihlblom (S) på en pressträff den
+      4 februari.
+        Lämplighetsprövningen av
+      enskilda som ansöker om att bli
+      huvudmän inom skolväsendet
+      föreslås utökas med
+      demokrativillkor. Regeringen vill
+      också att utrymmet som finns för
+      religiösa inslag i skolan
+      förtydligas. Detta så att elever
+      kan välja om de vill delta eller
+      ej.
         - Det behövs skarpare och
-      effektivare verktyg för
-      tillstånd och tillsyn så att
-      oseriösa och olämpliga aktörer
-      förhindras och stoppas.
-      Verksamheter som inte följer
-      reglerna kan stängas genom att
-      deras godkännande återkallas,
+      effektivare verktyg för tillstånd
+      och tillsyn så att oseriösa och
+      olämpliga aktörer förhindras och
+      stoppas. Verksamheter som inte
+      följer reglerna kan stängas genom
+      att deras godkännande återkallas,
       säger Lina Axelsson Kihlblom.
-        S gick till val 2018 på att förb-
-      juda religiösa friskolor. Men
+        S gick till val 2018 på att
+      förbjuda religiösa friskolor. Men
       ett förbud finns det i dag inte
-      en majoritet för i riksdagen. Skolmi-
-      nistern säger emellertid att ett etableri-
-      ngsstopp bereds just nu i regerings-
-      kansliet. Ett etableringsstopp
-      har dock fått kritik då det risk-
-      erar att bryta mot religion-
-      sfriheten såväl som
+      en majoritet för i riksdagen.
+      Skolministern säger emellertid
+      att ett etableringsstopp bereds
+      just nu i regeringskansliet. Ett
+      etableringsstopp har dock fått
+      kritik då det riskerar att bryta
+      mot religionsfriheten såväl som
       Europakonventionen.
         Lagändringarna vad gäller
       skärpta regler för religiösa

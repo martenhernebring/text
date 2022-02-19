@@ -1,6 +1,7 @@
 package se.epochtimes.backend.text.model;
 
 import org.junit.jupiter.api.Test;
+import se.epochtimes.backend.text.model.main.HeadlineComponent;
 import se.epochtimes.backend.text.model.wrap.Format;
 import se.epochtimes.backend.text.model.wrap.WordWrapper;
 
@@ -13,7 +14,7 @@ import static se.epochtimes.backend.text.model.wrap.WordWrapper.join;
 public class WordWrapperTest {
 
   private String defaultInsert(String insert) {
-    WordWrapper ww = new WordWrapper(insert, Format.DEFAULT);
+    WordWrapper ww = new WordWrapper(insert, Format.PARAGRAPH);
     return join(ww.wrapWordsWithBisect());
   }
 
@@ -61,9 +62,9 @@ public class WordWrapperTest {
   }
 
   final String unprocessPreamble =
-    "Polisen kommer under veckan trappa ned den särskilda insats som inleddes " +
-      "efter att det inkommit ett 20-tal observationer av drönare runt om i " +
-      "Sverige. Bland annat observerades drönare över kärnkraftverk.";
+    "Polisen kommer under veckan trappa ned den särskilda insats som inleddes "
+      + "efter att det inkommit ett 20-tal observationer av drönare runt om i "
+      + "Sverige. Bland annat observerades drönare över kärnkraftverk.";
 
   @Test
   void wrapParagraphIfFourWordsTooWide() {
@@ -93,12 +94,6 @@ public class WordWrapperTest {
   }
 
   @Test
-  void breakLineAtEnd() {
-    assertThat(defaultInsert("inkommit ett 20-tal observationer"),
-      is("inkommit ett 20-tal" + NL + "observationer" + NL));
-  }
-
-  @Test
   void veryLongLeftOver() {
     assertThat(defaultInsert("trappa " +
       "gravmonumentsindustrifabrikationsprodukterna"),
@@ -117,14 +112,15 @@ public class WordWrapperTest {
 
   @Test
   void wrapParagraphSixTimesWithTwentyNineWords() {
-    assertThat(defaultInsert(unprocessPreamble), is("" +
-      "Polisen kommer under veckan" + NL +
-      "trappa ned den särskilda insats" + NL +
-      "som inleddes efter att det inko-" + NL +
-      "mmit ett 20-tal observationer av" + NL +
-      "drönare runt om i Sverige. Bland" + NL +
-      "annat observerades drönare över" + NL +
-      "kärnkraftverk." + NL));
+    assertThat(defaultInsert(unprocessPreamble), is("""
+      Polisen kommer under veckan
+      trappa ned den särskilda insats
+      som inleddes efter att det
+      inkommit ett 20-tal observationer
+      av drönare runt om i Sverige.
+      Bland annat observerades drönare
+      över kärnkraftverk.
+      """));
   }
 
   @Test
@@ -158,12 +154,14 @@ public class WordWrapperTest {
   void body2() {
     assertThat(paragraphInsert("– Det beror främst på att radio- " +
       "och tv-avgiften avskaffats, men också på att färre får skulder rela" +
-      "terade till exempelvis fordon, skatt och studier.", 2), is("" +
-      "  – Det beror främst på att" + NL +
-      "radio- och tv-avgiften avska-" + NL +
-      "ffats, men också på att färre får" + NL +
-      "skulder relaterade till exemp-" + NL +
-      "elvis fordon, skatt och studier." + NL));
+      "terade till exempelvis fordon, skatt och studier.", 2), is("""
+        – Det beror främst på att
+      radio- och tv-avgiften
+      avskaffats, men också på att
+      färre får skulder relaterade
+      till exempelvis fordon, skatt och
+      studier.
+      """));
   }
 
   @Test
@@ -261,6 +259,124 @@ public class WordWrapperTest {
       "Lomma, som följs av Danderyd och" + NL +
       "Täby i Stockholmsområdet" + NL
     ));
+  }
+
+  @Test
+  void newBody1() {
+    assertThat(paragraphInsert("S gick till val 2018 på att förbjuda " +
+      "religiösa friskolor. Men ett förbud finns det i dag inte en " +
+      "majoritet för i riksdagen. Skolministern säger emellertid att ett " +
+      "etableringsstopp bereds just nu i regeringskansliet. Ett " +
+      "etableringsstopp har dock fått kritik då det riskerar att bryta mot " +
+      "religionsfriheten såväl som Europakonventionen.", 2), is("""
+        S gick till val 2018 på att
+      förbjuda religiösa friskolor. Men
+      ett förbud finns det i dag inte
+      en majoritet för i riksdagen.
+      Skolministern säger emellertid
+      att ett etableringsstopp bereds
+      just nu i regeringskansliet. Ett
+      etableringsstopp har dock fått
+      kritik då det riskerar att bryta
+      mot religionsfriheten såväl som
+      Europakonventionen.
+      """));
+  }
+
+  public static final String HEADLINE =
+    "Kronofogden: De samlade skulderna större än någonsin";
+  public static final String LEAD =
+    "Antalet svenskar som har skulder hos Kronofogden är det lägsta på 30 " +
+      "år. Däremot är det samlade skuldberget större än någonsin och växer " +
+      "snabbt. Det visar ny statistik från myndigheten.";
+
+  public static final String FORMATTED_LEAD = "" +
+    "Antalet svenskar som har" + NL +
+    "skulder hos Kronofogden är det" + NL +
+    "lägsta på 30 år. Däremot är" + NL +
+    "det samlade skuldberget större" + NL +
+    "än någonsin och växer snabbt." + NL +
+    "Det visar ny statistik från" + NL +
+    "myndigheten." + NL;
+
+  public static final String FORMATTED_HEADLINE = "Kronofogden:" + NL +
+    "De samlade" + NL + "skulderna" + NL + "större än" + NL + "någonsin" + NL;
+
+  @Test
+  void integrationOldArticle() {
+    HeadlineComponent fhc = WordWrapper
+      .format(new HeadlineComponent(HEADLINE, LEAD));
+    String body = """
+      I slutet av 2021 fanns drygt 391 000 personer registrerade hos Kronofogden. Det rör sig om en minskning med lite över 11 000 personer jämfört med året innan. Kronofogdens analytiker Davor Vuleta säger i ett uttalande att en av orsakerna till att antalet blivit färre har att göra med att skulderna till staten minskar.
+      – Det beror främst på att radio- och tv-avgiften avskaffats, men också på att färre får skulder relaterade till exempelvis fordon, skatt och studier.
+      Enligt Vuleta handlar det också om att "den ekonomiska återhämtningen varit stark".
+      – De olika stödpaketen har mildrat effekterna av pandemin och fungerat som en sorts krockkudde.
+      Vid årsskiftet var den samlade skulden hos Kronofogden 94 miljarder kronor, en ökning med sju miljarder kronor sedan 2020 eller nästan 20 miljoner kronor om dagen. På tio år har skuldberget vuxit med över 32 miljarder kronor.
+      De personer som har skulder hos Kronofogden betalar i regel först räntor och avgifter. Endast om pengarna räcker går betalningarna till själva skulden."
+      – Många skuldsatta betalar år efter år genom att vi mäter ut deras lön. Trots det är grundskulden kvar. Det de betalar går till räntorna. Det tycker vi är ett systemfel som gör att människor fastnar i decennier med skulder hos oss, säger biträdande rikskronofogde Cecilia Hegethorn Mogensen.
+      I 46 av landets 290 kommuner ökar antalet personer med skulder till Kronofogden.
+      Högst andel skuldsatta invånare återfinns i kommunen Ljusnarsberg i Örebro län följt av Perstorp i Skåne och Eda i Värmland. Lägst andel skuldsatta har skånska Lomma, som följs av Danderyd och Täby i Stockholmsområdet
+      """;
+    assertThat(FORMATTED_HEADLINE, is(fhc.getHeadline()));
+    assertThat(FORMATTED_LEAD, is(fhc.getLead()));
+    assertThat(WordWrapper.formatBody(body), is("""
+         I slutet av 2021 fanns drygt
+      391 000 personer registrerade hos
+      Kronofogden. Det rör sig om en
+      minskning med lite över 11 000
+      personer jämfört med året innan.
+      Kronofogdens analytiker Davor
+      Vuleta säger i ett uttalande att
+      en av orsakerna till att antalet
+      blivit färre har att göra med att
+      skulderna till staten minskar.
+        – Det beror främst på att
+      radio- och tv-avgiften
+      avskaffats, men också på att
+      färre får skulder relaterade
+      till exempelvis fordon, skatt och
+      studier.
+        Enligt Vuleta handlar det
+      också om att "den ekonomiska
+      återhämtningen varit stark".
+        – De olika stödpaketen har
+      mildrat effekterna av pandemin
+      och fungerat som en sorts
+      krockkudde.
+        Vid årsskiftet var den samlade
+      skulden hos Kronofogden 94
+      miljarder kronor, en ökning med
+      sju miljarder kronor sedan 2020
+      eller nästan 20 miljoner kronor
+      om dagen. På tio år har
+      skuldberget vuxit med över 32
+      miljarder kronor.
+        De personer som har skulder hos
+      Kronofogden betalar i regel först
+      räntor och avgifter. Endast om
+      pengarna räcker går betalningarna
+      till själva skulden."
+        – Många skuldsatta betalar år
+      efter år genom att vi mäter ut
+      deras lön. Trots det är
+      grundskulden kvar. Det de betalar
+      går till räntorna. Det tycker vi
+      är ett systemfel som gör att
+      människor fastnar i decennier med
+      skulder hos oss, säger biträdande
+      rikskronofogde Cecilia Hegethorn
+      Mogensen.
+        I 46 av landets 290 kommuner
+      ökar antalet personer med
+      skulder till Kronofogden.
+        Högst andel skuldsatta invånare
+      återfinns i kommunen Ljusnarsberg
+      i Örebro län följt av Perstorp i
+      Skåne och Eda i Värmland. Lägst
+      andel skuldsatta har skånska
+      Lomma, som följs av Danderyd och
+      Täby i Stockholmsområdet
+      """));
   }
 
 }
