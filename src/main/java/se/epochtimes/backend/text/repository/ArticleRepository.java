@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.main.HeadlineComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 
 import java.util.List;
 

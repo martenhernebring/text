@@ -13,7 +13,7 @@ import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.WordWrapperTest;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.header.Subject;
-import se.epochtimes.backend.text.model.main.HeadlineComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.ArrayList;

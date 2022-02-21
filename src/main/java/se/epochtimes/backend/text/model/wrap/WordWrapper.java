@@ -1,7 +1,7 @@
 package se.epochtimes.backend.text.model.wrap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import se.epochtimes.backend.text.model.main.HeadlineComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,11 @@ public class WordWrapper {
       words[i] = new Word(w[i], i);
   }
 
+  public WordWrapper(int max) {
+    this.max = max;
+    this.words = new Word[0];
+  }
+
   public WordWrapper(String raw, Format format) {
     this(raw);
     switch (format) {
@@ -41,6 +46,10 @@ public class WordWrapper {
   public WordWrapper(String raw, Format format, int startingSpaces) {
     this(raw, format);
     this.startingSpaces = startingSpaces;
+  }
+
+  public int getMax() {
+    return max;
   }
 
   public static HeadlineComponent format(HeadlineComponent main) {

@@ -6,7 +6,7 @@ import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.main.HeadlineComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.List;

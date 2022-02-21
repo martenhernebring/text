@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model.main;
+package se.epochtimes.backend.text.model.headline;
 
 import java.io.Serializable;
 
