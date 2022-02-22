@@ -146,6 +146,13 @@ public class WordWrapperTest {
   }
 
   @Test
+  void notBisectIfThreeLongWordsAndNoRoom() {
+    final String given = "abcdefghijklmnopqrstuvwxyzåäö" + "abcdefghijklmnopqrstuvwxyzåäö " + "pqrstuvwxyzåäö";
+    final String when = paragraphInsert(given);
+    assertTrue(isValid(when, 3));
+  }
+
+  @Test
   void veryLongLeftOver() {
     final String given = "trappa " +
       "gravmonumentsindustrifabrikationsprodukterna";
