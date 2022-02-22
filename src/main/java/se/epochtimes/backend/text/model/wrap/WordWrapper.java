@@ -26,20 +26,34 @@ public class WordWrapper {
     return main;
   }
 
+  public static String formatBody(String body) {
+    String[] paragraphs = body.trim().split("\\R+");
+    paragraphs[0] = format(paragraphs[0], 3);
+    for(int i = 1; i < paragraphs.length; i++)
+      paragraphs[i] = format(paragraphs[i], 2);
+    return String.join("", paragraphs);
+  }
+
+  static String join(List<String> lines) {
+    StringJoiner joiner = new StringJoiner(NL, "", NL);
+    for (String el : lines) {
+      joiner.add(el);
+    }
+    return joiner.toString();
+  }
+
   private static String format(String text, Format format) {
     WordWrapper ww = new WordWrapper(text, format);
     return join(ww.wrapWords());
   }
 
-  public static String formatBody(String body) {
-    String[] paragraphs = body.trim().split("\\R+");
-    WordWrapper ww = new WordWrapper(paragraphs[0], Format.PARAGRAPH, 3);
-    paragraphs[0] = join(ww.wrapWordsWithBisect());
-    for(int i = 1; i < paragraphs.length; i++) {
-      ww = new WordWrapper(paragraphs[i], Format.PARAGRAPH, 2);
-      paragraphs[i] = join(ww.wrapWordsWithBisect());
-    }
-    return String.join("", paragraphs);
+  private static String format(String text, int startingSpaces) {
+    WordWrapper ww = new WordWrapper(text, Format.PARAGRAPH, startingSpaces);
+    return join(ww.wrapWords());
+  }
+
+  int getMax() {
+    return max;
   }
 
   WordWrapper(int max) {
@@ -50,10 +64,6 @@ public class WordWrapper {
   WordWrapper(String raw, Format format, int startingSpaces) {
     this(raw, format);
     this.startingSpaces = startingSpaces;
-  }
-
-  int getMax() {
-    return max;
   }
 
   List<String> wrapWordsWithBisect() {
@@ -68,12 +78,12 @@ public class WordWrapper {
       return normal;
   }
 
-  static String join(List<String> lines) {
-    StringJoiner joiner = new StringJoiner(NL, "", NL);
-    for (String el : lines) {
-      joiner.add(el);
-    }
-    return joiner.toString();
+  private WordWrapper(String raw) {
+    String[] w = raw.trim().split("\\s+");
+    int l = w.length;
+    words = new Word[l];
+    for(int i = 0; i < l; i++)
+      words[i] = new Word(w[i], i);
   }
 
   private WordWrapper(String raw, Format format) {
@@ -85,23 +95,13 @@ public class WordWrapper {
     }
   }
 
-  private WordWrapper(String raw) {
-    String[] w = raw.trim().split("\\s+");
-    int l = w.length;
-    words = new Word[l];
-    for(int i = 0; i < l; i++)
-      words[i] = new Word(w[i], i);
-  }
-
   private List<String> wrapWords() {
     lines = new ArrayList<>();
     lineWidth = 0;
     for(Word word: words)
       append(word);
     addLine();
-    ImmutablePair<Integer, String> l = findLongest();
-    if (l.getLeft() < (lines.size() - 1))
-      updateIfNecessary(l);
+    updateIfNecessary();
     return lines;
   }
 
@@ -119,13 +119,6 @@ public class WordWrapper {
       addWhiteSpaceDistance();
     else
       addParagraphStartingSpace();
-  }
-
-  private void addParagraphStartingSpace() {
-    for(int sp = 0; sp < startingSpaces; sp++) {
-      sb.append(" ");
-      lineWidth++;
-    }
   }
 
   private void addWhiteSpaceDistance() {
@@ -152,6 +145,13 @@ public class WordWrapper {
     }
   }
 
+  private void addParagraphStartingSpace() {
+    for(int sp = 0; sp < startingSpaces; sp++) {
+      sb.append(" ");
+      lineWidth++;
+    }
+  }
+
   private void addWord() {
     if (currentWord.isNotBig(max) && (!bisect || isNotBisectable()))
       sb.append(currentWord);
@@ -168,6 +168,17 @@ public class WordWrapper {
     lineWidth = leftOver.length();
   }
 
+  private void addLine() {
+    lines.add(sb.toString());
+    sb.setLength(0);
+  }
+
+  private void updateIfNecessary() {
+    ImmutablePair<Integer, String> l = findLongest();
+    if (l.getLeft() < (lines.size() - 1))
+      updateIfNecessaryNotLast(l);
+  }
+
   private ImmutablePair<Integer, String> findLongest() {
     int index = 0;
     String longest = lines.get(0);
@@ -180,7 +191,7 @@ public class WordWrapper {
     return new ImmutablePair<>(index, longest);
   }
 
-  private void updateIfNecessary(ImmutablePair<Integer, String> longest) {
+  private void updateIfNecessaryNotLast(ImmutablePair<Integer, String> longest) {
     int li = longest.getLeft();
     String next = lines.get(li + 1);
     String[] w = longest.getRight().split(" ");
@@ -191,11 +202,6 @@ public class WordWrapper {
       lines.set(li, ls.substring(0, ls.length() - last.length() - 1));
       lines.set(li + 1, ls.substring(ls.length() - last.length()) + " " + next);
     }
-  }
-
-  private void addLine() {
-    lines.add(sb.toString());
-    sb.setLength(0);
   }
 
   private boolean isLong() {
