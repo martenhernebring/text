@@ -130,7 +130,7 @@ public class WordWrapper {
   }
 
   private void addWhiteSpaceSmallWord() {
-    if (((!bisect || isNotBisectable()) || (lineWidth - currentWord.getLength()/2 >= max)) && isLong()) {
+    if (((!bisect || isNotBisectable()) || bisectedFirstHalfCannotFit()) && isLong()) {
       addLine();
       lineWidth = currentWord.getLength();
     } else
@@ -214,5 +214,9 @@ public class WordWrapper {
 
   private boolean isNotBisectable() {
     return !isLong() || currentWord.getLength() <= 14 || currentWord.getIndex() >= (words.length - 1);
+  }
+
+  private boolean bisectedFirstHalfCannotFit() {
+    return (lineWidth - currentWord.getLength()/2 >= max);
   }
 }
