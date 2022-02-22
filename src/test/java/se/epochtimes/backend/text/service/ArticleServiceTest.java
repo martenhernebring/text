@@ -10,7 +10,7 @@ import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
-import se.epochtimes.backend.text.model.WordWrapperTest;
+import se.epochtimes.backend.text.model.wrap.WordWrapperTest;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.model.headline.HeadlineComponent;

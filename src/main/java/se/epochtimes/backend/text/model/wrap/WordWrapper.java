@@ -20,44 +20,15 @@ public class WordWrapper {
   private Word currentWord;
   private boolean bisect;
 
-  private WordWrapper(String raw) {
-    String[] w = raw.trim().split("\\s+");
-    int l = w.length;
-    words = new Word[l];
-    for(int i = 0; i < l; i++)
-      words[i] = new Word(w[i], i);
-  }
-
-  public WordWrapper(int max) {
-    this.max = max;
-    this.words = new Word[0];
-  }
-
-  public WordWrapper(String raw, Format format) {
-    this(raw);
-    switch (format) {
-      case HEADLINE -> this.max = 12;
-      case LEAD -> this.max = 30;
-      case PARAGRAPH -> this.max = 33;
-      case DEFAULT -> this.max = 32;
-    }
-  }
-
-  public WordWrapper(String raw, Format format, int startingSpaces) {
-    this(raw, format);
-    this.startingSpaces = startingSpaces;
-  }
-
-  public int getMax() {
-    return max;
-  }
-
   public static HeadlineComponent format(HeadlineComponent main) {
-    WordWrapper ww = new WordWrapper(main.getHeadline(), Format.HEADLINE);
-    main.setHeadline(join(ww.wrapWords()));
-    ww = new WordWrapper(main.getLead(), Format.LEAD);
-    main.setLead(join(ww.wrapWords()));
+    main.setHeadline(format(main.getHeadline(), Format.HEADLINE));
+    main.setLead(format(main.getLead(), Format.LEAD));
     return main;
+  }
+
+  private static String format(String text, Format format) {
+    WordWrapper ww = new WordWrapper(text, format);
+    return join(ww.wrapWords());
   }
 
   public static String formatBody(String body) {
@@ -71,15 +42,21 @@ public class WordWrapper {
     return String.join("", paragraphs);
   }
 
-  public static String join(List<String> lines) {
-    StringJoiner joiner = new StringJoiner(NL, "", NL);
-    for (String el : lines) {
-      joiner.add(el);
-    }
-    return joiner.toString();
+  WordWrapper(int max) {
+    this.max = max;
+    this.words = new Word[0];
   }
 
-  public List<String> wrapWordsWithBisect() {
+  WordWrapper(String raw, Format format, int startingSpaces) {
+    this(raw, format);
+    this.startingSpaces = startingSpaces;
+  }
+
+  int getMax() {
+    return max;
+  }
+
+  List<String> wrapWordsWithBisect() {
     List<String> normal = wrapWords();
     int normalNewLines = normal.size();
     bisect = true;
@@ -91,7 +68,32 @@ public class WordWrapper {
       return normal;
   }
 
-  public List<String> wrapWords() {
+  static String join(List<String> lines) {
+    StringJoiner joiner = new StringJoiner(NL, "", NL);
+    for (String el : lines) {
+      joiner.add(el);
+    }
+    return joiner.toString();
+  }
+
+  private WordWrapper(String raw, Format format) {
+    this(raw);
+    switch (format) {
+      case HEADLINE -> this.max = 12;
+      case LEAD -> this.max = 30;
+      case PARAGRAPH -> this.max = 33;
+    }
+  }
+
+  private WordWrapper(String raw) {
+    String[] w = raw.trim().split("\\s+");
+    int l = w.length;
+    words = new Word[l];
+    for(int i = 0; i < l; i++)
+      words[i] = new Word(w[i], i);
+  }
+
+  private List<String> wrapWords() {
     lines = new ArrayList<>();
     lineWidth = 0;
     for(Word word: words)

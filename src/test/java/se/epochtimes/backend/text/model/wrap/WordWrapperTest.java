@@ -1,4 +1,4 @@
-package se.epochtimes.backend.text.model;
+package se.epochtimes.backend.text.model.wrap;
 
 import org.junit.jupiter.api.Test;
 import se.epochtimes.backend.text.model.headline.HeadlineComponent;
@@ -54,6 +54,7 @@ public class WordWrapperTest {
         if(!first) {
           sb.append(" ");
         }
+        first = false;
         sb.append(p);
         Matcher m = Pattern.compile("(\r\n)|(\r)|(\n)").matcher(sb.toString());
         int newLines = 0, previous = -1;
@@ -118,6 +119,13 @@ public class WordWrapperTest {
   }
 
   @Test
+  void veryLongWordShouldBreakItself() {
+    final String given = "gravmonumentsindustrifabrikationsprodukterna";
+    final String when = paragraphInsert(given);
+    assertTrue(isValid(when, 2));
+  }
+
+  @Test
   void wrapParagraphIfTwoLongWords() {
     final String given = "Storbritanniens invandringslagstiftning";
     final String when = paragraphInsert(given);
@@ -129,6 +137,29 @@ public class WordWrapperTest {
     final String given = "opinionsundersökning från SvD/GP/Sifo.";
     final String when = paragraphInsert(given);
     assertTrue(isValid(when, 2));
+  }
+
+  @Test
+  void bisectIfThreeLongWords() {
+    final String given = "abcdefghijklmno " + "abcdefghijklmnopqrstuvwxyzåäö " + "pqrstuvwxyzåäö";
+    final String when = paragraphInsert(given);
+    assertTrue(isValid(when, 2));
+  }
+
+  @Test
+  void veryLongLeftOver() {
+    final String given = "trappa " +
+      "gravmonumentsindustrifabrikationsprodukterna";
+    final String when = paragraphInsert(given);
+    assertTrue(isValid(when, 2));
+  }
+
+  @Test
+  void veryLongWordAtTheEnd() {
+    final String given = "trappa ned den särskilda insats " +
+      "gravmonumentsindustrifabrikationsprodukterna";
+    final String when = paragraphInsert(given);
+    assertTrue(isValid(when, 3));
   }
 
   final String unprocessPreamble =
@@ -151,33 +182,8 @@ public class WordWrapperTest {
   }
 
   @Test
-  void veryLongWordShouldBreakItself() {
-    final String given = "gravmonumentsindustrifabrikationsprodukterna";
-    final String when = paragraphInsert(given);
-    assertTrue(isValid(when, 2));
-  }
-
-  @Test
-  void veryLongWordAtTheEnd() {
-    final String given = "trappa ned den särskilda insats " +
-      "gravmonumentsindustrifabrikationsprodukterna";
-    final String when = paragraphInsert(given);
-    assertTrue(isValid(when, 3));
-  }
-
-  @Test
-  void veryLongLeftOver() {
-    final String given = "trappa " +
-      "gravmonumentsindustrifabrikationsprodukterna";
-    final String when = paragraphInsert(given);
-    assertTrue(isValid(when, 2));
-  }
-
-  @Test
   void wrapParagraphFourTimesWithNineteenWords() {
-    final String given = "Polisen kommer under veckan " +
-      "trappa ned den särskilda insats som inleddes efter att det inkommit " +
-      "ett 20-tal observationer av drönare";
+    final String given = unprocessPreamble.substring(0, 131);
     final String when = paragraphInsert(given);
     assertTrue(isValid(when, 5));
   }
@@ -189,7 +195,7 @@ public class WordWrapperTest {
   }
 
   @Test
-  void longArticle() {
+  void imageCredit() {
     final String given = "Det samlade skuldberget hos " +
       "Kronofogden uppgår till 94 miljarder kronor.";
     final String when = paragraphInsert(given);
