@@ -204,16 +204,17 @@ public class WordWrapper {
     return new ImmutablePair<>(index, longest);
   }
 
-  private void updateIfNecessaryNotLast(ImmutablePair<Integer, String> longest) {
-    int li = longest.getLeft();
+  private void updateIfNecessaryNotLast(ImmutablePair<Integer, String> ip) {
+    int li = ip.getLeft();
     String next = lines.get(li + 1);
-    String[] w = longest.getRight().split(" ");
-    String last = w[w.length - 1];
-    int proposal = next.length() + last.length();
-    String ls = longest.getRight();
-    if(proposal <= max && proposal < ls.length()) {
-      lines.set(li, ls.substring(0, ls.length() - last.length() - 1));
-      lines.set(li + 1, ls.substring(ls.length() - last.length()) + " " + next);
+    String[] w = ip.getRight().split(" ");
+    int lstl = w[w.length - 1].length();
+    int proposal = next.length() + lstl;
+    String lngst = ip.getRight();
+    int lngstl = lngst.length();
+    if(proposal <= max && proposal < lngstl) {
+      lines.set(li, lngst.substring(0, lngstl - lstl - 1));
+      lines.set(li + 1, lngst.substring(lngstl - lstl) + " " + next);
     }
   }
 }
