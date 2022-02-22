@@ -2,11 +2,11 @@ package se.epochtimes.backend.text.model.wrap;
 
 public class Word {
   private final String word;
-  private final int index;
+  private final Order order;
 
-  public Word(String word, int paragraphIndex) {
+  public Word(String word, Order order) {
     this.word = word;
-    this.index = paragraphIndex;
+    this.order = order;
   }
 
   boolean isEmpty() {
@@ -17,8 +17,8 @@ public class Word {
     return word.length();
   }
 
-  int getIndex() {
-    return index;
+  Order getOrder() {
+    return order;
   }
 
   boolean isNotBig(int max) {

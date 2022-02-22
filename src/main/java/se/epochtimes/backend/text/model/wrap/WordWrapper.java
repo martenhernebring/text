@@ -17,24 +17,22 @@ public class WordWrapper {
 
   private int lineWidth, startingSpaces;
   private final StringBuilder sb = new StringBuilder();
-  private Word currentWord;
   private boolean bisect;
-
-  public static HeadlineComponent format(HeadlineComponent main) {
-    main.setHeadline(format(main.getHeadline(), Format.HEADLINE));
-    main.setLead(format(main.getLead(), Format.LEAD));
-    return main;
-  }
 
   public static String formatBody(String body) {
     String[] paragraphs = body.trim().split("\\R+");
-    paragraphs[0] = format(paragraphs[0], 3);
+    paragraphs[0] = formatParagraph(paragraphs[0], 3);
     for(int i = 1; i < paragraphs.length; i++)
-      paragraphs[i] = format(paragraphs[i], 2);
+      paragraphs[i] = formatParagraph(paragraphs[i], 2);
     return String.join("", paragraphs);
   }
 
-  static String join(List<String> lines) {
+  static String formatParagraph(String text, int startingSpaces) {
+    WordWrapper ww = new WordWrapper(text, Format.PARAGRAPH, startingSpaces);
+    return join(ww.wrapWordsWithBisect());
+  }
+
+  private static String join(List<String> lines) {
     StringJoiner joiner = new StringJoiner(NL, "", NL);
     for (String el : lines) {
       joiner.add(el);
@@ -42,31 +40,7 @@ public class WordWrapper {
     return joiner.toString();
   }
 
-  private static String format(String text, Format format) {
-    WordWrapper ww = new WordWrapper(text, format);
-    return join(ww.wrapWords());
-  }
-
-  private static String format(String text, int startingSpaces) {
-    WordWrapper ww = new WordWrapper(text, Format.PARAGRAPH, startingSpaces);
-    return join(ww.wrapWords());
-  }
-
-  int getMax() {
-    return max;
-  }
-
-  WordWrapper(int max) {
-    this.max = max;
-    this.words = new Word[0];
-  }
-
-  WordWrapper(String raw, Format format, int startingSpaces) {
-    this(raw, format);
-    this.startingSpaces = startingSpaces;
-  }
-
-  List<String> wrapWordsWithBisect() {
+  private List<String> wrapWordsWithBisect() {
     List<String> normal = wrapWords();
     int normalNewLines = normal.size();
     bisect = true;
@@ -78,21 +52,15 @@ public class WordWrapper {
       return normal;
   }
 
-  private WordWrapper(String raw) {
-    String[] w = raw.trim().split("\\s+");
-    int l = w.length;
-    words = new Word[l];
-    for(int i = 0; i < l; i++)
-      words[i] = new Word(w[i], i);
+  public static HeadlineComponent format(HeadlineComponent main) {
+    main.setHeadline(format(main.getHeadline(), Format.HEADLINE));
+    main.setLead(format(main.getLead(), Format.LEAD));
+    return main;
   }
 
-  private WordWrapper(String raw, Format format) {
-    this(raw);
-    switch (format) {
-      case HEADLINE -> this.max = 12;
-      case LEAD -> this.max = 30;
-      case PARAGRAPH -> this.max = 33;
-    }
+  private static String format(String text, Format format) {
+    WordWrapper ww = new WordWrapper(text, format);
+    return join(ww.wrapWords());
   }
 
   private List<String> wrapWords() {
@@ -103,69 +71,6 @@ public class WordWrapper {
     addLine();
     updateIfNecessary();
     return lines;
-  }
-
-  private void append(Word word) {
-    if (word.isEmpty())
-      return;
-    this.currentWord = word;
-    this.lineWidth += word.getLength();
-    addLeadingWhiteSpace();
-    addWord();
-  }
-
-  private void addLeadingWhiteSpace() {
-    if(currentWord.getIndex() > 0)
-      addWhiteSpaceDistance();
-    else
-      addParagraphStartingSpace();
-  }
-
-  private void addWhiteSpaceDistance() {
-    lineWidth++;
-    if(currentWord.isNotBig(max))
-      addWhiteSpaceSmallWord();
-    else
-      addWhiteSpaceBigWord();
-  }
-
-  private void addWhiteSpaceSmallWord() {
-    if (((!bisect || isNotBisectable()) || bisectedFirstHalfCannotFit()) && isLong()) {
-      addLine();
-      lineWidth = currentWord.getLength();
-    } else
-      sb.append(" ");
-  }
-
-  private void addWhiteSpaceBigWord() {
-    if(!isHuge())
-      sb.append(" ");
-    else {
-      addLine();
-    }
-  }
-
-  private void addParagraphStartingSpace() {
-    for(int sp = 0; sp < startingSpaces; sp++) {
-      sb.append(" ");
-      lineWidth++;
-    }
-  }
-
-  private void addWord() {
-    if (currentWord.isNotBig(max) && (!bisect || isNotBisectable()))
-      sb.append(currentWord);
-    else {
-      bisect();
-    }
-  }
-
-  private void bisect() {
-    sb.append(currentWord.bisectFirstHalf());
-    addLine();
-    String leftOver = currentWord.getSecondHalf();
-    sb.append(leftOver);
-    lineWidth = leftOver.length();
   }
 
   private void addLine() {
@@ -204,19 +109,97 @@ public class WordWrapper {
     }
   }
 
-  private boolean isLong() {
-    return lineWidth > max;
+  private void addParagraphStartingSpace() {
+    for(int sp = 0; sp < startingSpaces; sp++) {
+      sb.append(" ");
+      lineWidth++;
+    }
   }
 
-  private boolean isHuge() {
-    return lineWidth - currentWord.getLength()/2 > max;
+  private WordWrapper(String raw) {
+    String[] w = raw.trim().split("\\s+");
+    int l = w.length;
+    words = new Word[l];
+    words[0] = new Word(w[0], Order.FIRST);
+    if(l > 1){
+      for(int i = 1; i < l - 1; i++)
+        words[i] = new Word(w[i], Order.MIDDLE);
+      words[l - 1] = new Word(w[l - 1], Order.LAST);
+    }
   }
 
-  private boolean isNotBisectable() {
-    return !isLong() || currentWord.getLength() <= 14 || currentWord.getIndex() >= (words.length - 1);
+  private WordWrapper(String raw, Format format) {
+    this(raw);
+    this.max = format.getMax();
   }
 
-  private boolean bisectedFirstHalfCannotFit() {
-    return (lineWidth - currentWord.getLength()/2 >= max);
+  private WordWrapper(String raw, Format format, int startingSpaces) {
+    this(raw, format);
+    this.startingSpaces = startingSpaces;
+  }
+
+  private void append(Word word) {
+    if (word.isEmpty())
+      return;
+    this.lineWidth += word.getLength();
+    addLeadingWhiteSpace(word);
+    addWord(word);
+  }
+
+  private void addLeadingWhiteSpace(Word word) {
+    if(word.getOrder() == Order.FIRST)
+      addParagraphStartingSpace();
+    else
+      addWhiteSpaceDistance(word);
+  }
+
+  private void addWhiteSpaceDistance(Word word) {
+    lineWidth++;
+    if(word.isNotBig(max))
+      addWhiteSpaceSmallWord(word);
+    else
+      addWhiteSpaceBigWord(word);
+  }
+
+  private void addWhiteSpaceSmallWord(Word word) {
+    if ((lineWidth > max) && (
+        lineWidth - word.getLength()/2 >= max
+        || !bisect
+        || word.getLength() <= 14
+        || word.getOrder() == Order.LAST
+      )) {
+      addLine();
+      lineWidth = word.getLength();
+    } else
+      sb.append(" ");
+  }
+
+  private void addWhiteSpaceBigWord(Word word) {
+    if(!(lineWidth - word.getLength()/2 > max))
+      sb.append(" ");
+    else {
+      addLine();
+    }
+  }
+
+  private void addWord(Word word) {
+    if (word.isNotBig(max) && (
+      !bisect
+      || !(lineWidth > max)
+      || word.getLength() <= 14
+      || word.getOrder() == Order.LAST)
+    )
+      sb.append(word);
+    else {
+      bisect(word);
+    }
+  }
+
+  private void bisect(Word word) {
+    sb.append(word.bisectFirstHalf());
+    addLine();
+    String leftOver = word.getSecondHalf();
+    sb.append(leftOver);
+    lineWidth = leftOver.length();
   }
 }

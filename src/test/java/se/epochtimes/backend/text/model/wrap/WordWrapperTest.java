@@ -2,30 +2,63 @@ package se.epochtimes.backend.text.model.wrap;
 
 import org.junit.jupiter.api.Test;
 import se.epochtimes.backend.text.model.headline.HeadlineComponent;
-import se.epochtimes.backend.text.model.wrap.Format;
-import se.epochtimes.backend.text.model.wrap.WordWrapper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static se.epochtimes.backend.text.model.wrap.WordWrapper.NL;
-import static se.epochtimes.backend.text.model.wrap.WordWrapper.join;
 
 public class WordWrapperTest {
 
-  private WordWrapper ww;
+  private int max = 33;
 
   private String paragraphInsert(String insert) {
     return paragraphInsert(insert, 0);
   }
 
   private String paragraphInsert(String insert, int startingSpaces) {
-    ww = new WordWrapper(insert, Format.PARAGRAPH, startingSpaces);
-    return join(ww.wrapWordsWithBisect());
+    return WordWrapper.formatParagraph(insert, startingSpaces);
+  }
+
+  private boolean isValid(String actualText, int expectedNewLines, Format format) {
+    this.max = format.getMax();
+    return switch (format) {
+      case HEADLINE, LEAD -> isValid(actualText, expectedNewLines);
+      case PARAGRAPH -> isValidBody(actualText, expectedNewLines);
+    };
+  }
+
+  private boolean isValidBody(String actualText, int expectedNewLines) {
+      String[] paragraphs = actualText.split("(\r\n )+|(\r )+|(\n )+");
+      int actualNewLines = -1;
+      int maxLineLength = 0;
+      boolean first = true;
+      for (String p : paragraphs) {
+        StringBuilder sb = new StringBuilder();
+        if (!first) {
+          sb.append(" ");
+        }
+        first = false;
+        sb.append(p);
+        Matcher m = Pattern.compile("(\r\n)|(\r)|(\n)").matcher(sb.toString());
+        int newLines = 0, previous = -1;
+        while (m.find()) {
+          newLines++;
+          int latest = m.start();
+          int lineLength = latest - previous - 1;
+          previous = latest;
+          if (lineLength > maxLineLength) {
+            maxLineLength = lineLength;
+          }
+        }
+        actualNewLines += newLines + 1;
+      }
+      return (maxLineLength <= max) & (expectedNewLines == actualNewLines);
   }
 
   private boolean isValid(String wrappedText, int expectedNewLines) {
@@ -40,41 +73,7 @@ public class WordWrapperTest {
         maxLineLength = lineLength;
       }
     }
-    return (maxLineLength <= ww.getMax()) & (expectedNewLines == actualNewLines);
-  }
-
-  private boolean isValid(String actualText, int expectedNewLines, int expectedMax) {
-    if(expectedMax >= 33) {
-      String[] paragraphs = actualText.split("(\r\n )+|(\r )+|(\n )+");
-      int actualNewLines = -1;
-      int maxLineLength = 0;
-      boolean first = true;
-      for(String p: paragraphs) {
-        StringBuilder sb = new StringBuilder();
-        if(!first) {
-          sb.append(" ");
-        }
-        first = false;
-        sb.append(p);
-        Matcher m = Pattern.compile("(\r\n)|(\r)|(\n)").matcher(sb.toString());
-        int newLines = 0, previous = -1;
-        while (m.find()){
-          newLines ++;
-          int latest = m.start();
-          int lineLength = latest - previous - 1;
-          previous = latest;
-          if(lineLength > maxLineLength) {
-            maxLineLength = lineLength;
-          }
-        }
-        actualNewLines += newLines + 1;
-      }
-      return (maxLineLength <= expectedMax) & (expectedNewLines == actualNewLines);
-    }
-    else {
-      ww = new WordWrapper(expectedMax);
-      return isValid(actualText, expectedNewLines);
-    }
+    return (maxLineLength <= max) & (expectedNewLines == actualNewLines);
   }
 
   @Test
@@ -88,7 +87,7 @@ public class WordWrapperTest {
     final String when = paragraphInsert(given);
 
     assertThat(when, is(given + NL));
-    assertThat(when.length(), lessThan(ww.getMax()));
+    assertThat(when.length(), lessThan(max));
   }
 
   @Test
@@ -97,7 +96,7 @@ public class WordWrapperTest {
     final String when = paragraphInsert(given);
 
     assertThat(when, is(NL));
-    assertThat(when.length(), lessThan(ww.getMax()));
+    assertThat(when.length(), lessThan(max));
   }
 
   @Test
@@ -106,7 +105,7 @@ public class WordWrapperTest {
     final String when = paragraphInsert(given);
 
     assertThat(when, is(given + NL));
-    assertThat(when.length(), lessThan(ww.getMax()));
+    assertThat(when.length(), lessThan(max));
   }
 
   @Test
@@ -115,7 +114,7 @@ public class WordWrapperTest {
     final String when = paragraphInsert(given);
 
     assertThat(when, is(given.trim() + NL));
-    assertThat(when.length(), lessThan(ww.getMax()));
+    assertThat(when.length(), lessThan(max));
   }
 
   @Test
@@ -397,9 +396,9 @@ public class WordWrapperTest {
     int expectedHeadlineNewLines = countNewLines(FORMATTED_HEADLINE);
     int expectedLeadNewLines = countNewLines(FORMATTED_LEAD);
     int expectedBodyNewLines = countNewLines(expectedBody);
-    assertTrue(isValid(actualHC.getHeadline(), expectedHeadlineNewLines, 12));
-    assertTrue(isValid(actualHC.getLead(), expectedLeadNewLines, 30));
-    assertTrue(isValid(actualBody, expectedBodyNewLines, 33));
+    assertTrue(isValid(actualHC.getHeadline(), expectedHeadlineNewLines, Format.HEADLINE));
+    assertTrue(isValid(actualHC.getLead(), expectedLeadNewLines, Format.LEAD));
+    assertTrue(isValid(actualBody, expectedBodyNewLines, Format.PARAGRAPH));
   }
 
   private int countNewLines(String wrappedText) {
