@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import se.epochtimes.backend.text.dto.ArticleDTO;
+import se.epochtimes.backend.text.dto.EditDTO;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
@@ -50,18 +51,18 @@ public class ArticleControllerTest {
   private static final String BASE_URL = "/v1/articles";
 
   private HeaderComponent hc;
-  private ArticleDTO inputDTO, outputDTO;
+  private ArticleDTO dto;
 
   @BeforeEach
   void setUp() {
     hc = new HeaderComponent(Subject.EKONOMI, 2022, "Inrikes", "");
-    inputDTO = new ArticleDTO(hc, "headline", "lead", "support");
-    outputDTO = new ArticleDTO(hc, inputDTO.getHeadline(), inputDTO.getLead(), "   support");
+    dto = new ArticleDTO(hc, "headline", "lead", "   support");
   }
 
   @Test
   void postArticle() throws Exception {
-    when(mockedService.add(any(ArticleDTO.class))).thenReturn(outputDTO);
+    ArticleDTO inputDTO = new ArticleDTO(hc, dto.getHeadline(), dto.getLead(), "support");
+    when(mockedService.add(any(ArticleDTO.class))).thenReturn(dto);
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
       .content(objectMapper.writeValueAsString(inputDTO))
@@ -82,7 +83,7 @@ public class ArticleControllerTest {
       .thenThrow(new ConflictException("The article has already been posted."));
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-        .content(objectMapper.writeValueAsString(inputDTO))
+        .content(objectMapper.writeValueAsString(dto))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.CONFLICT.value()));
   }
@@ -90,7 +91,7 @@ public class ArticleControllerTest {
   @Test
   void getAllUnsorted() throws Exception {
     final List<ArticleDTO> dtos = new ArrayList<>();
-    dtos.add(outputDTO);
+    dtos.add(dto);
     when(mockedService.getAllUnsorted()).thenReturn(dtos);
     MvcResult mvcResult = mockMvc
       .perform(get(BASE_URL))
@@ -123,7 +124,7 @@ public class ArticleControllerTest {
 
   @Test
   void getOne() throws Exception {
-    when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(outputDTO);
+    when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(dto);
     MvcResult mvcResult = mockMvc
       .perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
         + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
@@ -131,8 +132,30 @@ public class ArticleControllerTest {
       .andReturn();
 
     String actualResponseJson = mvcResult.getResponse().getContentAsString();
-    String expectedResultJson = objectMapper.writeValueAsString(outputDTO);
+    String expectedResultJson = objectMapper.writeValueAsString(dto);
     assertEquals(expectedResultJson, actualResponseJson);
+  }
+
+  @Test
+  void changeHeadline() throws Exception {
+    final String newHeadline = "newHeadline!";
+    dto.setHeadline(newHeadline);
+    EditDTO editDTO = new EditDTO(dto.getHeadline(), dto.getLead(), dto.getSupport());
+    when(mockedService.edit(any(ArticleDTO.class))).thenReturn(dto);
+
+    String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.put(
+      BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
+        + hc.getSubject().getPrint().toLowerCase() + "/" + "1234")
+        .content(objectMapper.writeValueAsString(editDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
+
+    String h = "\"headline\":\"";
+    assertTrue(aRJ.substring(aRJ.indexOf(h) + h.length(),
+      aRJ.indexOf("\",\"lead\":\"")).matches(newHeadline));
   }
 
 

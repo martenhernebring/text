@@ -23,9 +23,10 @@ public class ArticleDTO implements Serializable {
 
   public ArticleDTO(Article article) {
     this.header = article.getHeaderComponent();
-    this.headline = article.getHeadlineComponent().getHeadline();
-    this.lead = article.getHeadlineComponent().getLead();
-    this.support = article.getBody();
+    var cc = article.getContentComponent();
+    this.headline = cc.getHeadline();
+    this.lead = cc.getLead();
+    this.support = cc.getBody();
   }
 
   public HeaderComponent getHeader() {

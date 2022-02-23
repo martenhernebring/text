@@ -10,10 +10,10 @@ import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
-import se.epochtimes.backend.text.model.wrap.WordWrapperTest;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.header.Subject;
-import se.epochtimes.backend.text.model.headline.HeadlineComponent;
+import se.epochtimes.backend.text.model.headline.ContentComponent;
+import se.epochtimes.backend.text.model.wrap.WordWrapperTest;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class ArticleServiceTest {
 
   @Test
   void postingTwiceIsNotLegal() {
-    when(mockedArticleRepository.findByHeadline(any(HeadlineComponent.class))
+    when(mockedArticleRepository.findByHeadlineAndLead(any(String.class), any(String.class))
     ).thenReturn(List.of(article));
     assertThrows(ConflictException.class, () ->
       articleServiceTest.add(dto));
@@ -113,7 +113,7 @@ public class ArticleServiceTest {
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.add(dto);
     assertThat(result.getHeadline(), is(formatted));
-    assertTrue(dto.hashCode() != result.hashCode() );
+    assertTrue(dto.hashCode() != result.hashCode());
   }
 
   void stubOneArticleSaved() {
@@ -131,14 +131,14 @@ public class ArticleServiceTest {
   }
 
   @Test
-  void editArticle() {
+  void editArticleSetLead() {
     stubOneArticleSaved();
     final String newLead =
       "Regeringen föreslår att det ska bli tydligare krav och skärpta " +
-      "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
-      "Bland annat handlar det om en noggrannare kontroll av huvudmännen.";
+        "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
+        "Bland annat handlar det om en noggrannare kontroll av huvudmännen.";
     dto.setLead(newLead);
-    HeadlineComponent mc = new HeadlineComponent(dto.getHeadline(), dto.getLead());
+    ContentComponent mc = new ContentComponent(dto.getHeadline(), dto.getLead(), dto.getSupport());
     final String formattedNewLead = "" +
       "Regeringen föreslår att det" + NL +
       "ska bli tydligare krav och" + NL +
@@ -148,11 +148,23 @@ public class ArticleServiceTest {
       "handlar det om en noggrannare" + NL +
       "kontroll av huvudmännen." + NL;
     mc.setLead(formattedNewLead);
-    article.setHeadlineComponent(mc);
+    article.setContentComponent(mc);
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
     assertEquals(formattedNewLead, result.getLead());
     assertNotEquals(dto.getLead(), result.getLead());
+  }
+
+  @Test
+  void editArticleSetSupport() {
+    stubOneArticleSaved();
+    final String newSupport = "New Support test.";
+    dto.setSupport(newSupport);
+    article.getContentComponent().setBody(newSupport);
+    when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
+    ArticleDTO result = articleServiceTest.edit(dto);
+    assertEquals("   " + newSupport + NL, result.getSupport());
+    assertNotEquals(dto.getSupport(), result.getSupport());
   }
 
   @Test
@@ -285,8 +297,6 @@ public class ArticleServiceTest {
       inslag i skolor föreslås träda
       i kraft den 1 januari 2023.
       """, sr);
-    assertEquals(article.getBody(), sr);
     assertNotEquals(dto, result.get(0));
   }
-
 }

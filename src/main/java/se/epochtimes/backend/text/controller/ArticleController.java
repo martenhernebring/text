@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 import se.epochtimes.backend.text.dto.ArticleDTO;
+import se.epochtimes.backend.text.dto.EditDTO;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.service.ArticleService;
@@ -50,9 +51,11 @@ public class ArticleController {
    */
   @Operation(summary = "Get all articles.")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved articles",
+    @ApiResponse(responseCode = "200",
+      description = "Successfully retrieved articles",
       content = @Content(mediaType = "application/json",
-        array = @ArraySchema(schema = @Schema(implementation = ArticleDTO.class)))),
+        array = @ArraySchema(
+          schema = @Schema(implementation = ArticleDTO.class)))),
   })
   @RequestMapping(value = "", method = RequestMethod.GET)
   public List<ArticleDTO> getAllArticles() {
@@ -64,7 +67,9 @@ public class ArticleController {
    */
   @Operation(summary = "Delete an article.")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully deleted the article", content = @Content)
+    @ApiResponse(responseCode = "200",
+      description = "Successfully deleted the article",
+      content = @Content)
   })
   @RequestMapping(value = "", method = RequestMethod.DELETE)
   public void deleteArticle(@RequestBody HeaderComponent header) {
@@ -76,7 +81,8 @@ public class ArticleController {
    */
   @Operation(summary = "Get article based on header.")
   @ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the article.",
+    @ApiResponse(responseCode = "200",
+      description = "Successfully retrieved the article.",
       content = @Content(mediaType = "application/json",
         schema = @Schema(implementation = ArticleDTO.class))),
   })
@@ -85,6 +91,27 @@ public class ArticleController {
     return articleService.getByHeader(
       new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId)
     );
+  }
+
+  /**
+   * @param editedArticle Newspaper article update
+   * @return Updated newspaper article
+   */
+  @Operation(summary = "Update an article.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200",
+      description = "Successfully updated the article",
+      content = @Content(mediaType = "application/json",
+        schema = @Schema(implementation = ArticleDTO.class))),
+    @ApiResponse(responseCode = "400", description =
+      "Unquoted character ->\\ and \", New line -> \\n, Subject -> EKONOMI",
+      content = @Content)})
+  @RequestMapping(value = "/inrikes/2022/ekonomi/{articleId}", method = RequestMethod.PUT)
+  public ArticleDTO update(@RequestBody EditDTO editedArticle, @PathVariable String articleId) {
+    return articleService.edit(new ArticleDTO(
+      new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId),
+      editedArticle.headline(), editedArticle.lead(), editedArticle.support()
+      ));
   }
 
 }

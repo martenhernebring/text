@@ -11,7 +11,6 @@ import java.util.List;
 public class Text {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
   private Long id;
 
   private Subject subject;

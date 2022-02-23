@@ -1,7 +1,7 @@
 package se.epochtimes.backend.text.model.wrap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import se.epochtimes.backend.text.model.headline.HeadlineComponent;
+import se.epochtimes.backend.text.model.headline.ContentComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 public class WordWrapper {
 
   public static final String NL = "\n";
-  private int max;
+  private int maxLettersPerLine;
 
   private final Word[] words;
   private List<String> lines;
@@ -33,7 +33,7 @@ public class WordWrapper {
 
   private WordWrapper(String raw, Format format) {
     this(raw);
-    this.max = format.getMax();
+    this.maxLettersPerLine = format.getMax();
   }
 
   private WordWrapper(String raw, Format format, int startingSpaces) {
@@ -46,9 +46,10 @@ public class WordWrapper {
     return join(ww.wrapWordsWithLines());
   }
 
-  public static HeadlineComponent format(HeadlineComponent main) {
+  public static ContentComponent format(ContentComponent main) {
     main.setHeadline(format(main.getHeadline(), Format.HEADLINE));
     main.setLead(format(main.getLead(), Format.LEAD));
+    main.setBody(formatBody(main.getBody()));
     return main;
   }
 
@@ -57,7 +58,7 @@ public class WordWrapper {
     return join(ww.wrapWordsWithBisect());
   }
 
-  public static String formatBody(String body) {
+  static String formatBody(String body) {
     String[] paragraphs = body.trim().split("\\R+");
     paragraphs[0] = formatParagraph(paragraphs[0], 3);
     for(int i = 1; i < paragraphs.length; i++)
@@ -175,15 +176,15 @@ public class WordWrapper {
   }
 
   private boolean isNotBig(int wordLength) {
-    return wordLength <= max;
+    return wordLength <= maxLettersPerLine;
   }
 
   private boolean isTooLongForBisect(int wordLength) {
-    return lineWidth - wordLength/2 > max;
+    return lineWidth - wordLength/2 > maxLettersPerLine;
   }
 
   private boolean isLineTooLong() {
-    return lineWidth > max;
+    return lineWidth > maxLettersPerLine;
   }
 
   private void updateIfNecessary() {
@@ -212,7 +213,7 @@ public class WordWrapper {
     int proposal = next.length() + lstl;
     String lngst = ip.getRight();
     int lngstl = lngst.length();
-    if(proposal <= max && proposal < lngstl) {
+    if(proposal <= maxLettersPerLine && proposal < lngstl) {
       lines.set(li, lngst.substring(0, lngstl - lstl - 1));
       lines.set(li + 1, lngst.substring(lngstl - lstl) + " " + next);
     }

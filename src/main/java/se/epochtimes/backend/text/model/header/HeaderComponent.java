@@ -1,5 +1,6 @@
 package se.epochtimes.backend.text.model.header;
 
+import javax.persistence.Embeddable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;

@@ -1,7 +1,7 @@
 package se.epochtimes.backend.text.model.wrap;
 
 import org.junit.jupiter.api.Test;
-import se.epochtimes.backend.text.model.headline.HeadlineComponent;
+import se.epochtimes.backend.text.model.headline.ContentComponent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -324,7 +324,7 @@ public class WordWrapperTest {
   public static final String FORMATTED_HEADLINE = "Kronofogden:" + NL +
     "De samlade" + NL + "skulderna" + NL + "större än" + NL + "någonsin" + NL;
 
-  private static final String givenBody = """
+  public static final String BODY = """
       I slutet av 2021 fanns drygt 391 000 personer registrerade hos Kronofogden. Det rör sig om en minskning med lite över 11 000 personer jämfört med året innan. Kronofogdens analytiker Davor Vuleta säger i ett uttalande att en av orsakerna till att antalet blivit färre har att göra med att skulderna till staten minskar.
       – Det beror främst på att radio- och tv-avgiften avskaffats, men också på att färre får skulder relaterade till exempelvis fordon, skatt och studier.
       Enligt Vuleta handlar det också om att "den ekonomiska återhämtningen varit stark".
@@ -336,7 +336,7 @@ public class WordWrapperTest {
       Högst andel skuldsatta invånare återfinns i kommunen Ljusnarsberg i Örebro län följt av Perstorp i Skåne och Eda i Värmland. Lägst andel skuldsatta har skånska Lomma, som följs av Danderyd och Täby i Stockholmsområdet
       """;
 
-  private static final String expectedBody = """
+  public static final String FORMATTED_BODY = """
          I slutet av 2021 fanns drygt
       391 000 personer registrerade hos
       Kronofogden. Det rör sig om en
@@ -397,15 +397,14 @@ public class WordWrapperTest {
 
   @Test
   void integrationOldArticle() {
-    final HeadlineComponent givenHC = new HeadlineComponent(HEADLINE, LEAD);
-    final String actualBody = WordWrapper.formatBody(givenBody);
-    final HeadlineComponent actualHC = WordWrapper.format(givenHC);
+    final ContentComponent givenContent = new ContentComponent(HEADLINE, LEAD, BODY);
+    final ContentComponent actualContent = WordWrapper.format(givenContent);
     int expectedHeadlineNewLines = countNewLines(FORMATTED_HEADLINE);
     int expectedLeadNewLines = countNewLines(FORMATTED_LEAD);
-    int expectedBodyNewLines = countNewLines(expectedBody);
-    assertTrue(isValid(actualHC.getHeadline(), expectedHeadlineNewLines, Format.HEADLINE));
-    assertTrue(isValid(actualHC.getLead(), expectedLeadNewLines, Format.LEAD));
-    assertTrue(isValid(actualBody, expectedBodyNewLines, Format.PARAGRAPH));
+    int expectedBodyNewLines = countNewLines(FORMATTED_BODY);
+    assertTrue(isValid(actualContent.getHeadline(), expectedHeadlineNewLines, Format.HEADLINE));
+    assertTrue(isValid(actualContent.getLead(), expectedLeadNewLines, Format.LEAD));
+    assertTrue(isValid(actualContent.getBody(), expectedBodyNewLines, Format.PARAGRAPH));
   }
 
   private int countNewLines(String wrappedText) {
