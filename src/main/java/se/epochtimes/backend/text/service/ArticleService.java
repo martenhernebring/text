@@ -6,7 +6,7 @@ import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.headline.ContentComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
 import java.util.List;
@@ -23,11 +23,11 @@ public class ArticleService {
 
   public ArticleDTO add(ArticleDTO dto) {
     List<Article> existing = articleRepository
-      .findByHeadlineAndLead(dto.getHeadline(), dto.getLead());
+      .findByHeadline(dto.getHeadline(), dto.getLead());
     if(existing.size() > 0) {
       throw new ConflictException(
         "The article has already been posted. Please get by following header: "
-          + existing.get(0).getHeaderComponent()
+          + existing.get(0).getHeader()
       );
     }
     Article article = articleRepository.save(new Article(dto));
@@ -40,9 +40,11 @@ public class ArticleService {
 
   public ArticleDTO edit(ArticleDTO articleDTO) {
     Article article = findByHeader(articleDTO.getHeader());
-    article.setContentComponent(
-      new ContentComponent(articleDTO.getHeadline(), articleDTO.getLead(), articleDTO.getSupport())
+    article.setHeadline(
+      new HeadlineComponent(articleDTO.getHeadline(), articleDTO.getLead())
     );
+    article.setBody(articleDTO.getSupport());
+
     Article savedArticle = articleRepository.save(article);
     return new ArticleDTO(savedArticle);
   }
@@ -53,7 +55,7 @@ public class ArticleService {
   }
 
   private Article findByHeader(HeaderComponent header) {
-    var existing = articleRepository.findByHeader(header);
+    var existing = articleRepository.findByHeader(header.getArticleId(), header.getSubject(), header.getVignette(), header.getYear());
     if(existing.size() > 1) {
       throw new ConflictException(
         "Server error: More than one article with the arguments exists.");

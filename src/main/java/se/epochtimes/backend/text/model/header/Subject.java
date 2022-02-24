@@ -1,15 +1,28 @@
 package se.epochtimes.backend.text.model.header;
 
 public enum Subject {
-  EKONOMI();
+  EKONOMI(0);
 
   private final String print;
+  private final int code;
 
-  Subject() {
+  Subject(int code) {
+    this.code = code;
     this.print = "EKONOMI";
   }
 
   public String getPrint() {
     return print;
+  }
+  public int getCode() {
+    return code;
+  }
+  public static Subject valueOf(int code) {
+    for (Subject value : Subject.values()) {
+      if (value.getCode() == code) {
+        return value;
+      }
+    }
+    throw new IllegalArgumentException("Invalid Employee Status code.");
   }
 }

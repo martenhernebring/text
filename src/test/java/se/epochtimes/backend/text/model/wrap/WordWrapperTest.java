@@ -1,7 +1,7 @@
 package se.epochtimes.backend.text.model.wrap;
 
 import org.junit.jupiter.api.Test;
-import se.epochtimes.backend.text.model.headline.ContentComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -397,14 +397,15 @@ public class WordWrapperTest {
 
   @Test
   void integrationOldArticle() {
-    final ContentComponent givenContent = new ContentComponent(HEADLINE, LEAD, BODY);
-    final ContentComponent actualContent = WordWrapper.format(givenContent);
+    final HeadlineComponent givenContent = new HeadlineComponent(HEADLINE, LEAD);
+    final HeadlineComponent actualContent = WordWrapper.format(givenContent);
+    final String actualBody = WordWrapper.formatBody(BODY);
     int expectedHeadlineNewLines = countNewLines(FORMATTED_HEADLINE);
     int expectedLeadNewLines = countNewLines(FORMATTED_LEAD);
     int expectedBodyNewLines = countNewLines(FORMATTED_BODY);
     assertTrue(isValid(actualContent.getHeadline(), expectedHeadlineNewLines, Format.HEADLINE));
-    assertTrue(isValid(actualContent.getLead(), expectedLeadNewLines, Format.LEAD));
-    assertTrue(isValid(actualContent.getBody(), expectedBodyNewLines, Format.PARAGRAPH));
+    assertTrue(isValid(actualContent.getLeader(), expectedLeadNewLines, Format.LEAD));
+    assertTrue(isValid(actualBody, expectedBodyNewLines, Format.PARAGRAPH));
   }
 
   private int countNewLines(String wrappedText) {

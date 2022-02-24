@@ -1,7 +1,7 @@
 package se.epochtimes.backend.text.model.wrap;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import se.epochtimes.backend.text.model.headline.ContentComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +46,9 @@ public class WordWrapper {
     return join(ww.wrapWordsWithLines());
   }
 
-  public static ContentComponent format(ContentComponent main) {
+  public static HeadlineComponent format(HeadlineComponent main) {
     main.setHeadline(format(main.getHeadline(), Format.HEADLINE));
-    main.setLead(format(main.getLead(), Format.LEAD));
-    main.setBody(formatBody(main.getBody()));
+    main.setLeader(format(main.getLeader(), Format.LEAD));
     return main;
   }
 
@@ -58,7 +57,7 @@ public class WordWrapper {
     return join(ww.wrapWordsWithBisect());
   }
 
-  static String formatBody(String body) {
+  public static String formatBody(String body) {
     String[] paragraphs = body.trim().split("\\R+");
     paragraphs[0] = formatParagraph(paragraphs[0], 3);
     for(int i = 1; i < paragraphs.length; i++)

@@ -11,10 +11,10 @@ class ArticleTest {
   @Test
   void hasEmptyConstructorWithSubjectAndCustomId() {
     Article article = new Article();
-    article.setHeaderComponent(new HeaderComponent(
+    article.setHeader(new HeaderComponent(
       Subject.EKONOMI, 2022, "Vignette", "1234"));
-    assertEquals("EKONOMI", article.getHeaderComponent().getSubject().getPrint());
-    assertEquals("1234", article.getHeaderComponent().getArticleId());
+    assertEquals("EKONOMI", Subject.valueOf(article.getHeader().getSubject()).getPrint());
+    assertEquals("1234", article.getHeader().getArticleId());
   }
 
 }

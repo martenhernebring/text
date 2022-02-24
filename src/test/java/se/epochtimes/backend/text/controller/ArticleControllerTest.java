@@ -127,7 +127,7 @@ public class ArticleControllerTest {
     when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(dto);
     MvcResult mvcResult = mockMvc
       .perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
-        + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
+        + Subject.valueOf(hc.getSubject()).getPrint().toLowerCase() + "/" + hc.getArticleId())
       ).andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
       .andReturn();
 
@@ -145,7 +145,7 @@ public class ArticleControllerTest {
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.put(
       BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
-        + hc.getSubject().getPrint().toLowerCase() + "/" + "1234")
+        + Subject.valueOf(hc.getSubject()).getPrint().toLowerCase() + "/" + "1234")
         .content(objectMapper.writeValueAsString(editDTO))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))

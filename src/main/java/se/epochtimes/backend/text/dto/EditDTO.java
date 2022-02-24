@@ -1,4 +1,6 @@
 package se.epochtimes.backend.text.dto;
 
-public record EditDTO(String headline, String lead, String support) {
+import java.io.Serializable;
+
+public record EditDTO(String headline, String lead, String support) implements Serializable {
 }

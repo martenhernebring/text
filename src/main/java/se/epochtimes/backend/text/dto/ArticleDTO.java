@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 public class ArticleDTO implements Serializable {
 
-  private final HeaderComponent header;
+  private HeaderComponent header;
   private String support;
   private String headline;
   private String lead;
@@ -22,15 +22,19 @@ public class ArticleDTO implements Serializable {
   }
 
   public ArticleDTO(Article article) {
-    this.header = article.getHeaderComponent();
-    var cc = article.getContentComponent();
-    this.headline = cc.getHeadline();
-    this.lead = cc.getLead();
-    this.support = cc.getBody();
+    this.header = article.getHeader();
+    var hc = article.getHeadline();
+    this.headline = hc.getHeadline();
+    this.lead = hc.getLeader();
+    this.support = article.getBody();
   }
 
   public HeaderComponent getHeader() {
     return header;
+  }
+
+  public void setHeader(HeaderComponent header) {
+    this.header = header;
   }
 
   public String getHeadline() {

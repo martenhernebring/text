@@ -12,7 +12,7 @@ import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.model.header.Subject;
-import se.epochtimes.backend.text.model.headline.ContentComponent;
+import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 import se.epochtimes.backend.text.model.wrap.WordWrapperTest;
 import se.epochtimes.backend.text.repository.ArticleRepository;
 
@@ -85,7 +85,7 @@ public class ArticleServiceTest {
 
   @Test
   void postingTwiceIsNotLegal() {
-    when(mockedArticleRepository.findByHeadlineAndLead(any(String.class), any(String.class))
+    when(mockedArticleRepository.findByHeadline(any(String.class), any(String.class))
     ).thenReturn(List.of(article));
     assertThrows(ConflictException.class, () ->
       articleServiceTest.add(dto));
@@ -93,7 +93,7 @@ public class ArticleServiceTest {
 
   @Test
   void tryToFindNonExistingByArticleIdIsNotLegal() {
-    when(mockedArticleRepository.findByHeader(any(HeaderComponent.class))
+    when(mockedArticleRepository.findByHeader(any(String.class), any(Integer.class), any(String.class), any(Integer.class))
     ).thenReturn(new ArrayList<>());
     assertThrows(ArticleNotFoundException.class, () ->
       articleServiceTest.edit(dto));
@@ -101,7 +101,7 @@ public class ArticleServiceTest {
 
   @Test
   void doubleWithSameArticleIdIsAServerError() {
-    when(mockedArticleRepository.findByHeader(any(HeaderComponent.class))
+    when(mockedArticleRepository.findByHeader(any(String.class), any(Integer.class), any(String.class), any(Integer.class))
     ).thenReturn(List.of(article, article));
     assertThrows(ConflictException.class, () -> articleServiceTest
       .removeArticle(header));
@@ -118,7 +118,7 @@ public class ArticleServiceTest {
 
   void stubOneArticleSaved() {
     doReturn(List.of(article)).when(mockedArticleRepository)
-      .findByHeader(any(HeaderComponent.class));
+      .findByHeader(any(String.class), any(Integer.class), any(String.class), any(Integer.class));
   }
 
   @Test
@@ -138,7 +138,7 @@ public class ArticleServiceTest {
         "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
         "Bland annat handlar det om en noggrannare kontroll av huvudmännen.";
     dto.setLead(newLead);
-    ContentComponent mc = new ContentComponent(dto.getHeadline(), dto.getLead(), dto.getSupport());
+    HeadlineComponent mc = new HeadlineComponent(dto.getHeadline(), newLead);
     final String formattedNewLead = "" +
       "Regeringen föreslår att det" + NL +
       "ska bli tydligare krav och" + NL +
@@ -147,8 +147,8 @@ public class ArticleServiceTest {
       "och fritidshem. Bland annat" + NL +
       "handlar det om en noggrannare" + NL +
       "kontroll av huvudmännen." + NL;
-    mc.setLead(formattedNewLead);
-    article.setContentComponent(mc);
+    mc.setLeader(formattedNewLead);
+    article.setHeadline(mc);
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
     assertEquals(formattedNewLead, result.getLead());
@@ -160,7 +160,7 @@ public class ArticleServiceTest {
     stubOneArticleSaved();
     final String newSupport = "New Support test.";
     dto.setSupport(newSupport);
-    article.getContentComponent().setBody(newSupport);
+    article.setBody(newSupport);
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
     assertEquals("   " + newSupport + NL, result.getSupport());

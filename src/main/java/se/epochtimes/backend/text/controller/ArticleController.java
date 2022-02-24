@@ -89,7 +89,7 @@ public class ArticleController {
   @RequestMapping(value = "/inrikes/2022/ekonomi/{articleId}", method = RequestMethod.GET)
   public ArticleDTO getArticleByHeader(@PathVariable String articleId) {
     return articleService.getByHeader(
-      new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId)
+      new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", "I" + articleId)
     );
   }
 
@@ -109,7 +109,7 @@ public class ArticleController {
   @RequestMapping(value = "/inrikes/2022/ekonomi/{articleId}", method = RequestMethod.PUT)
   public ArticleDTO update(@RequestBody EditDTO editedArticle, @PathVariable String articleId) {
     return articleService.edit(new ArticleDTO(
-      new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId),
+      new HeaderComponent(Subject.EKONOMI, 2022, "inrikes", articleId),
       editedArticle.headline(), editedArticle.lead(), editedArticle.support()
       ));
   }
