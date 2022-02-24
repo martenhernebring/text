@@ -55,6 +55,15 @@ public class ArticleServiceTest {
     article = new Article(dto);
   }
 
+  void stubArticlesSaved(List<Article> articles) {
+    doReturn(articles).when(mockedArticleRepository)
+      .findByHeader(any(String.class), any(Integer.class), any(String.class), any(Integer.class));
+  }
+
+  void stubOneArticleSaved() {
+    stubArticlesSaved(List.of(article));
+  }
+
   @Test
   void nullHeaderIsNotLegal() {
     assertThrows(NullPointerException.class, () -> articleServiceTest.add(
@@ -93,16 +102,14 @@ public class ArticleServiceTest {
 
   @Test
   void tryToFindNonExistingByArticleIdIsNotLegal() {
-    when(mockedArticleRepository.findByHeader(any(String.class), any(Integer.class), any(String.class), any(Integer.class))
-    ).thenReturn(new ArrayList<>());
+    stubArticlesSaved(new ArrayList<>());
     assertThrows(ArticleNotFoundException.class, () ->
       articleServiceTest.edit(dto));
   }
 
   @Test
   void doubleWithSameArticleIdIsAServerError() {
-    when(mockedArticleRepository.findByHeader(any(String.class), any(Integer.class), any(String.class), any(Integer.class))
-    ).thenReturn(List.of(article, article));
+    stubArticlesSaved(List.of(article, article));
     assertThrows(ConflictException.class, () -> articleServiceTest
       .removeArticle(header));
   }
@@ -114,11 +121,6 @@ public class ArticleServiceTest {
     ArticleDTO result = articleServiceTest.add(dto);
     assertThat(result.getHeadline(), is(formatted));
     assertTrue(dto.hashCode() != result.hashCode());
-  }
-
-  void stubOneArticleSaved() {
-    doReturn(List.of(article)).when(mockedArticleRepository)
-      .findByHeader(any(String.class), any(Integer.class), any(String.class), any(Integer.class));
   }
 
   @Test
@@ -149,6 +151,7 @@ public class ArticleServiceTest {
       "kontroll av huvudmännen." + NL;
     mc.setLeader(formattedNewLead);
     article.setHeadline(mc);
+    assertEquals(mc.hashCode(), article.getHeadline().hashCode());
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
     assertEquals(formattedNewLead, result.getLead());
@@ -179,66 +182,7 @@ public class ArticleServiceTest {
     doReturn(List.of(article)).when(mockedArticleRepository).findAll();
     List<ArticleDTO> result = articleServiceTest.getAllUnsorted();
     String sr = result.get(0).getSupport();
-    /*
-    assertEquals("""
-         I samband med januariavtalet
-      2019 kom Socialdemokraterna
-      överens med Miljöpartiet, Cen-
-      terpartiet och Liberalerna om
-      att utreda skärpta regler för så
-      kallade konfessionella friskolor
-      och ett stopp för nya religiösa
-      friskolor.
-        - Vi har sett exempel på att
-      aktörer inom offentlig sektor
-      har använt statliga och kom-
-      munala medel till antidemokra-
-      tisk verksamhet. Av Säkerhets-
-      polisens arbete och rapporter
-      från bland annat Försvarshög-
-      skolan framgår det att det exem-
-      pelvis har förekommit kopp-
-      lingar mellan skolverksamhet
-      och den våldsbejakande miljön.
-      Så här kan vi inte ha det, säger
-      skolminister Lina Axelsson Kihl-
-      blom (S) på en pressträff den 4
-      februari.
-        Lämplighetsprövningen av
-      enskilda som ansöker om att bli
-      huvudmän inom skolväsendet
-      föreslås utökas med demokrati-
-      villkor. Regeringen vill också att
-      utrymmet som finns för religiösa
-      inslag i skolan förtydligas. Detta
-      så att elever kan välja om de vill
-      delta eller ej.
-        - Det behövs skarpare och
-      effektivare verktyg för tillstånd
-      och tillsyn så att oseriösa och
-      olämpliga aktörer förhindras
-      och stoppas. Verksamheter som
-      inte följer reglerna kan stängas
-      genom att deras godkännande
-      återkallas, säger Lina Axelsson
-      Kihlblom.
-        S gick till val 2018 på att för-
-      bjuda religiösa friskolor. Men
-      ett förbud finns det i dag inte en
-      majoritet för i riksdagen. Skolmi-
-      nistern säger emellertid att ett
-      etableringsstopp bereds just nu
-      i regeringskansliet. Ett etable-
-      ringsstopp har dock fått kritik då
-      det riskerar att bryta mot religi-
-      onsfriheten såväl som Europa-
-      konventionen.
-        Lagändringarna vad gäller
-      skärpta regler för religiösa inslag
-      i skolor föreslås träda i kraft den
-      1 januari 2023.
-      """, sr);
-     */
+    assertNotEquals(dto, result.get(0));
     assertEquals("""
          I samband med januariavtalet
       2019 kom Socialdemokraterna
@@ -297,6 +241,5 @@ public class ArticleServiceTest {
       inslag i skolor föreslås träda
       i kraft den 1 januari 2023.
       """, sr);
-    assertNotEquals(dto, result.get(0));
   }
 }

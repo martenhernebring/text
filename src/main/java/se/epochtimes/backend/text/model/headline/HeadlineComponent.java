@@ -42,7 +42,10 @@ public class HeadlineComponent implements Serializable {
 
     HeadlineComponent that = (HeadlineComponent) o;
 
-    return new EqualsBuilder().append(headline, that.headline).append(leader, that.leader).isEquals();
+    return new EqualsBuilder()
+      .append(headline, that.headline)
+      .append(leader, that.leader)
+      .isEquals();
   }
 
   @Override

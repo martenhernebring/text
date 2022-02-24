@@ -22,18 +22,22 @@ public class HeaderComponent implements Serializable {
   //Jpa requirement
   public HeaderComponent() {}
 
-  public HeaderComponent(Subject subject, int year, String vignette, String articleId) {
+  public HeaderComponent(Subject subject,
+                         int year,
+                         String vignette,
+                         String articleId) {
     setSubject(subject);
-    setYear(year);
+    setPubYear(year);
     setVignette(vignette);
     setArticleId(articleId);
   }
 
   private static String generateId() {
-    return String.format("%04d", ThreadLocalRandom.current().nextInt(0, 9999 + 1));
+    return String.format("%04d", ThreadLocalRandom.current()
+      .nextInt(0, 9999 + 1));
   }
 
-  public int getYear() {
+  public int getPubYear() {
     return pubYear;
   }
 
@@ -41,8 +45,8 @@ public class HeaderComponent implements Serializable {
     return vignette;
   }
 
-  public int getSubject() {
-    return subject;
+  public Subject getSubject() {
+    return Subject.valueOf(subject);
   }
 
   public String getArticleId() {
@@ -53,8 +57,8 @@ public class HeaderComponent implements Serializable {
     this.subject = subject.getCode();
   }
 
-  public void setYear(int year) {
-    this.pubYear = year;
+  public void setPubYear(int pubYear) {
+    this.pubYear = pubYear;
   }
 
   public void setVignette(String vignette) {
@@ -77,11 +81,21 @@ public class HeaderComponent implements Serializable {
 
     HeaderComponent that = (HeaderComponent) o;
 
-    return new EqualsBuilder().append(pubYear, that.pubYear).append(subject, that.subject).append(vignette, that.vignette).append(articleId, that.articleId).isEquals();
+    return new EqualsBuilder()
+      .append(pubYear, that.pubYear)
+      .append(subject, that.subject)
+      .append(vignette, that.vignette)
+      .append(articleId, that.articleId)
+      .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(subject).append(pubYear).append(vignette).append(articleId).toHashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(subject)
+      .append(pubYear)
+      .append(vignette)
+      .append(articleId)
+      .toHashCode();
   }
 }

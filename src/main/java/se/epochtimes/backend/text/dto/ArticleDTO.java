@@ -14,7 +14,10 @@ public class ArticleDTO implements Serializable {
   private String headline;
   private String lead;
 
-  public ArticleDTO(HeaderComponent header, String headline, String lead, String support) {
+  public ArticleDTO(HeaderComponent header,
+                    String headline,
+                    String lead,
+                    String support) {
     this.header = header;
     this.headline = headline;
     this.lead = lead;

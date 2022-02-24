@@ -13,7 +13,7 @@ class ArticleTest {
     Article article = new Article();
     article.setHeader(new HeaderComponent(
       Subject.EKONOMI, 2022, "Vignette", "1234"));
-    assertEquals("EKONOMI", Subject.valueOf(article.getHeader().getSubject()).getPrint());
+    assertEquals("EKONOMI", article.getHeader().getSubject().getPrint());
     assertEquals("1234", article.getHeader().getArticleId());
   }
 

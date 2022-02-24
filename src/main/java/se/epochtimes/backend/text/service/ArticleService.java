@@ -55,7 +55,12 @@ public class ArticleService {
   }
 
   private Article findByHeader(HeaderComponent header) {
-    var existing = articleRepository.findByHeader(header.getArticleId(), header.getSubject(), header.getVignette(), header.getYear());
+    var existing = articleRepository.findByHeader(
+      header.getArticleId(),
+      header.getSubject().getCode(),
+      header.getVignette(),
+      header.getPubYear()
+    );
     if(existing.size() > 1) {
       throw new ConflictException(
         "Server error: More than one article with the arguments exists.");
@@ -63,12 +68,18 @@ public class ArticleService {
       try {
         return existing.get(0);
       } catch(IndexOutOfBoundsException ex) {
-        throw new ArticleNotFoundException("No article with the arguments was found.");
+        throw new ArticleNotFoundException(
+          "No article with the arguments was found."
+        );
       }
     }
   }
 
   public List<ArticleDTO> getAllUnsorted() {
-    return articleRepository.findAll().stream().map(ArticleDTO::new).collect(Collectors.toList());
+    return articleRepository
+      .findAll()
+      .stream()
+      .map(ArticleDTO::new)
+      .collect(Collectors.toList());
   }
 }

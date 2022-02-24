@@ -11,7 +11,10 @@ import java.util.List;
 @Repository("articleRepository")
 public interface ArticleRepository extends JpaRepository<Article, Long> {
   @Query(value = "SELECT * FROM newspaperarticle na WHERE " +
-    "na.article_id = ?1 AND na.subject = ?2 AND na.vignette = ?3 AND na.pub_year = ?4",
+    "na.article_id = ?1 AND " +
+    "na.subject = ?2 AND " +
+    "na.vignette = ?3 AND " +
+    "na.pub_year = ?4",
     nativeQuery = true)
   List<Article> findByHeader(
     @Param(value = "article_id") String article_id,
@@ -20,7 +23,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Param(value = "pub_year") int pub_year
   );
 
-  @Query(value = "SELECT * FROM newspaperarticle na WHERE na.headline = ?1 AND na.leader = ?2",
+  @Query(value = "SELECT * FROM newspaperarticle na WHERE " +
+    "na.headline = ?1 AND na.leader = ?2",
     nativeQuery = true)
   List<Article> findByHeadline(
     @Param(value = "headline") String headline,

@@ -75,6 +75,7 @@ public class ArticleControllerTest {
     String p = "\"articleId\":\"";
     assertTrue(aRJ.substring(aRJ.indexOf(p) + p.length(),
       aRJ.indexOf("\"},\"support\":\"")).matches("[0-9]{4}"));
+    assertEquals(hc, inputDTO.getHeader());
   }
 
   @Test
@@ -126,8 +127,8 @@ public class ArticleControllerTest {
   void getOne() throws Exception {
     when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(dto);
     MvcResult mvcResult = mockMvc
-      .perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
-        + Subject.valueOf(hc.getSubject()).getPrint().toLowerCase() + "/" + hc.getArticleId())
+      .perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
+        + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
       ).andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
       .andReturn();
 
@@ -144,8 +145,8 @@ public class ArticleControllerTest {
     when(mockedService.edit(any(ArticleDTO.class))).thenReturn(dto);
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.put(
-      BASE_URL + "/" + hc.getVignette() + "/" + hc.getYear() + "/"
-        + Subject.valueOf(hc.getSubject()).getPrint().toLowerCase() + "/" + "1234")
+      BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
+        + hc.getSubject().getPrint().toLowerCase() + "/" + "1234")
         .content(objectMapper.writeValueAsString(editDTO))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))

@@ -8,8 +8,10 @@ import se.epochtimes.backend.text.model.wrap.WordWrapper;
 import javax.persistence.*;
 
 @Entity
-@SecondaryTable(name = "header", pkJoinColumns = @PrimaryKeyJoinColumn(name = "header_id"))
-@SecondaryTable(name = "headline", pkJoinColumns = @PrimaryKeyJoinColumn(name = "headline_id"))
+@SecondaryTable(name = "header",
+  pkJoinColumns = @PrimaryKeyJoinColumn(name = "header_id"))
+@SecondaryTable(name = "headline",
+  pkJoinColumns = @PrimaryKeyJoinColumn(name = "headline_id"))
 @Table(name = "newspaperarticle")
 public class Article {
 
