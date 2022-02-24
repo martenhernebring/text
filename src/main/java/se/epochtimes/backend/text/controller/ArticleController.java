@@ -110,7 +110,7 @@ public class ArticleController {
   public ArticleDTO update(@RequestBody EditDTO editedArticle, @PathVariable String articleId) {
     return articleService.edit(new ArticleDTO(
       new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId),
-      editedArticle.headline(), editedArticle.lead(), editedArticle.support()
+      editedArticle.headline(), editedArticle.leader(), editedArticle.support()
       ));
   }
 
