@@ -31,7 +31,7 @@ public class Article {
 
   public Article(ArticleDTO dto) {
     header = dto.getHeader();
-    setHeadline(new HeadlineComponent(dto.getHeadline(), dto.getLeader()));
+    setHC(new HeadlineComponent(dto.getHeadline(), dto.getLeader()));
     setBody(dto.getSupport());
   }
 
@@ -39,7 +39,7 @@ public class Article {
     return this.header;
   }
 
-  public HeadlineComponent getHeadline() {
+  public HeadlineComponent getHC() {
     return this.headline;
   }
 
@@ -47,7 +47,7 @@ public class Article {
     this.header = header;
   }
 
-  public void setHeadline(HeadlineComponent headline) {
+  public void setHC(HeadlineComponent headline) {
     this.headline = WordWrapper.format(headline);
   }
 

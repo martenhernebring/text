@@ -25,8 +25,7 @@ import se.epochtimes.backend.text.service.ArticleService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -159,5 +158,26 @@ public class ArticleControllerTest {
       aRJ.indexOf("\",\"leader\":\"")).matches(newHeadline));
   }
 
+  @Test
+  void emptyLeaderShouldNotChange() throws Exception {
+    final String oldLeader = "leader";
+    dto.setLeader(oldLeader);
+    when(mockedService.edit(any(ArticleDTO.class))).thenReturn(dto);
+    final String newLeader = "";
+    EditDTO editDTO = new EditDTO(dto.getHeadline(), newLeader, dto.getSupport());
+
+    String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.put(
+          BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
+            + hc.getSubject().getPrint().toLowerCase() + "/" + "1234")
+        .content(objectMapper.writeValueAsString(editDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
+
+    String l = "\"leader\":\"\"}";
+    assertThrows(StringIndexOutOfBoundsException.class, () -> aRJ.substring(aRJ.indexOf(l)));
+  }
 
 }

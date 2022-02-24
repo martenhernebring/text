@@ -26,7 +26,7 @@ public class ArticleDTO implements Serializable {
 
   public ArticleDTO(Article article) {
     this.header = article.getHeader();
-    var hc = article.getHeadline();
+    var hc = article.getHC();
     this.headline = hc.getHeadline();
     this.leader = hc.getLeader();
     this.support = article.getBody();

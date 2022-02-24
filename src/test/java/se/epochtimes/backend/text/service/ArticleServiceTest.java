@@ -142,7 +142,7 @@ public class ArticleServiceTest {
     HeadlineComponent mc = new HeadlineComponent();
     mc.setHeadline(dto.getHeadline());
     mc.setLeader(newLeader);
-    assertNotEquals(mc, article.getHeadline());
+    assertNotEquals(mc, article.getHC());
     dto.setLeader(newLeader);
     final String formattedNewLead = "" +
       "Regeringen föreslår att det" + NL +
@@ -153,8 +153,8 @@ public class ArticleServiceTest {
       "handlar det om en noggrannare" + NL +
       "kontroll av huvudmännen." + NL;
     mc.setLeader(formattedNewLead);
-    article.setHeadline(mc);
-    assertEquals(mc.hashCode(), article.getHeadline().hashCode());
+    article.setHC(mc);
+    assertEquals(mc.hashCode(), article.getHC().hashCode());
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
     assertEquals(formattedNewLead, result.getLeader());
@@ -171,6 +171,34 @@ public class ArticleServiceTest {
     ArticleDTO result = articleServiceTest.edit(dto);
     assertEquals("   " + newSupport + NL, result.getSupport());
     assertNotEquals(dto.getSupport(), result.getSupport());
+  }
+
+  @Test
+  void emptyHeadlineShouldNotChange() {
+    final String oldHeadline = "headline" + NL;
+    var hc = article.getHC();
+    hc.setHeadline(oldHeadline);
+    article.setHC(hc);
+    stubOneArticleSaved();
+    final String newHeadline = "";
+    dto.setHeadline(newHeadline);
+    when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
+    ArticleDTO result = articleServiceTest.edit(dto);
+    assertEquals(oldHeadline, result.getHeadline());
+    assertNotEquals(dto.getHeadline(), article.getHC().getHeadline());
+  }
+
+  @Test
+  void emptyBodyShouldNotChange() {
+    final String oldBody = "   body" + NL;
+    article.setBody(oldBody);
+    stubOneArticleSaved();
+    final String newBody = "";
+    dto.setSupport(newBody);
+    when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
+    ArticleDTO result = articleServiceTest.edit(dto);
+    assertEquals(oldBody, result.getSupport());
+    assertNotEquals(dto.getSupport(), article.getBody());
   }
 
   @Test

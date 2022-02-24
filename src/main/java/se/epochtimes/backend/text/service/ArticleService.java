@@ -40,11 +40,15 @@ public class ArticleService {
 
   public ArticleDTO edit(ArticleDTO articleDTO) {
     Article article = findByHeader(articleDTO.getHeader());
-    article.setHeadline(
-      new HeadlineComponent(articleDTO.getHeadline(), articleDTO.getLeader())
-    );
-    article.setBody(articleDTO.getSupport());
-
+    HeadlineComponent hc = new HeadlineComponent();
+    hc.setHeadline(articleDTO.getHeadline().isEmpty() ?
+      article.getHC().getHeadline() : articleDTO.getHeadline());
+    hc.setLeader(articleDTO.getLeader().isEmpty() ?
+      article.getHC().getLeader() : articleDTO.getLeader());
+    article.setHC(hc);
+    if(!articleDTO.getSupport().isEmpty()) {
+      article.setBody(articleDTO.getSupport());
+    }
     Article savedArticle = articleRepository.save(article);
     return new ArticleDTO(savedArticle);
   }
