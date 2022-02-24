@@ -12,15 +12,15 @@ public class ArticleDTO implements Serializable {
   private HeaderComponent header;
   private String support;
   private String headline;
-  private String lead;
+  private String leader;
 
   public ArticleDTO(HeaderComponent header,
                     String headline,
-                    String lead,
+                    String leader,
                     String support) {
     this.header = header;
     this.headline = headline;
-    this.lead = lead;
+    this.leader = leader;
     this.support = support;
   }
 
@@ -28,7 +28,7 @@ public class ArticleDTO implements Serializable {
     this.header = article.getHeader();
     var hc = article.getHeadline();
     this.headline = hc.getHeadline();
-    this.lead = hc.getLeader();
+    this.leader = hc.getLeader();
     this.support = article.getBody();
   }
 
@@ -48,12 +48,12 @@ public class ArticleDTO implements Serializable {
     this.headline = headline;
   }
 
-  public String getLead() {
-    return lead;
+  public String getLeader() {
+    return leader;
   }
 
-  public void setLead(String lead) {
-    this.lead = lead;
+  public void setLeader(String leader) {
+    this.leader = leader;
   }
 
   public String getSupport() {
@@ -75,7 +75,7 @@ public class ArticleDTO implements Serializable {
     return new EqualsBuilder()
       .append(header, that.header)
       .append(headline, that.headline)
-      .append(lead, that.lead).isEquals();
+      .append(leader, that.leader).isEquals();
   }
 
   @Override
@@ -83,7 +83,7 @@ public class ArticleDTO implements Serializable {
     return new HashCodeBuilder(17, 37)
       .append(header)
       .append(headline)
-      .append(lead)
+      .append(leader)
       .toHashCode();
   }
 }

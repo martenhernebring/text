@@ -61,7 +61,7 @@ public class ArticleControllerTest {
 
   @Test
   void postArticle() throws Exception {
-    ArticleDTO inputDTO = new ArticleDTO(hc, dto.getHeadline(), dto.getLead(), "support");
+    ArticleDTO inputDTO = new ArticleDTO(hc, dto.getHeadline(), dto.getLeader(), "support");
     when(mockedService.add(any(ArticleDTO.class))).thenReturn(dto);
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
@@ -141,7 +141,7 @@ public class ArticleControllerTest {
   void changeHeadline() throws Exception {
     final String newHeadline = "newHeadline!";
     dto.setHeadline(newHeadline);
-    EditDTO editDTO = new EditDTO(dto.getHeadline(), dto.getLead(), dto.getSupport());
+    EditDTO editDTO = new EditDTO(dto.getHeadline(), dto.getLeader(), dto.getSupport());
     when(mockedService.edit(any(ArticleDTO.class))).thenReturn(dto);
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.put(
@@ -156,7 +156,7 @@ public class ArticleControllerTest {
 
     String h = "\"headline\":\"";
     assertTrue(aRJ.substring(aRJ.indexOf(h) + h.length(),
-      aRJ.indexOf("\",\"lead\":\"")).matches(newHeadline));
+      aRJ.indexOf("\",\"leader\":\"")).matches(newHeadline));
   }
 
 

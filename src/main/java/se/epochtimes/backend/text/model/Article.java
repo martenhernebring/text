@@ -31,7 +31,7 @@ public class Article {
 
   public Article(ArticleDTO dto) {
     header = dto.getHeader();
-    setHeadline(new HeadlineComponent(dto.getHeadline(), dto.getLead()));
+    setHeadline(new HeadlineComponent(dto.getHeadline(), dto.getLeader()));
     setBody(dto.getSupport());
   }
 

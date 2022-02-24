@@ -398,7 +398,6 @@ public class WordWrapperTest {
   void integrationOldArticle() {
     final HeadlineComponent givenContent = new HeadlineComponent(HEADLINE, LEAD);
     final HeadlineComponent actualContent = WordWrapper.format(givenContent);
-    assertEquals(givenContent, actualContent);
     final String actualBody = WordWrapper.formatBody(BODY);
     int expectedHeadlineNewLines = countNewLines(FORMATTED_HEADLINE);
     int expectedLeadNewLines = countNewLines(FORMATTED_LEAD);

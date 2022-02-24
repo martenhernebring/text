@@ -23,7 +23,7 @@ public class ArticleService {
 
   public ArticleDTO add(ArticleDTO dto) {
     List<Article> existing = articleRepository
-      .findByHeadline(dto.getHeadline(), dto.getLead());
+      .findByHeadline(dto.getHeadline(), dto.getLeader());
     if(existing.size() > 0) {
       throw new ConflictException(
         "The article has already been posted. Please get by following header: "
@@ -41,7 +41,7 @@ public class ArticleService {
   public ArticleDTO edit(ArticleDTO articleDTO) {
     Article article = findByHeader(articleDTO.getHeader());
     article.setHeadline(
-      new HeadlineComponent(articleDTO.getHeadline(), articleDTO.getLead())
+      new HeadlineComponent(articleDTO.getHeadline(), articleDTO.getLeader())
     );
     article.setBody(articleDTO.getSupport());
 

@@ -67,14 +67,14 @@ public class ArticleServiceTest {
   @Test
   void nullHeaderIsNotLegal() {
     assertThrows(NullPointerException.class, () -> articleServiceTest.add(
-      new ArticleDTO(null, dto.getHeadline(), dto.getLead(), dto.getSupport())
+      new ArticleDTO(null, dto.getHeadline(), dto.getLeader(), dto.getSupport())
     ));
   }
 
   @Test
   void nullHeadlineIsNotLegal() {
     assertThrows(NullPointerException.class, () -> articleServiceTest.add(
-      new ArticleDTO(header, null, dto.getLead(), dto.getSupport())
+      new ArticleDTO(header, null, dto.getLeader(), dto.getSupport())
     ));
   }
 
@@ -88,7 +88,7 @@ public class ArticleServiceTest {
   @Test
   void nullSupportIsNotLegal() {
     assertThrows(NullPointerException.class, () -> articleServiceTest.add(
-      new ArticleDTO(header, dto.getHeadline(), dto.getLead(), null)
+      new ArticleDTO(header, dto.getHeadline(), dto.getLeader(), null)
     ));
   }
 
@@ -128,19 +128,22 @@ public class ArticleServiceTest {
     stubOneArticleSaved();
     String formatted = WordWrapperTest.FORMATTED_LEAD;
     ArticleDTO result = articleServiceTest.getByHeader(header);
-    assertEquals(result.getLead(), formatted);
+    assertEquals(result.getLeader(), formatted);
     assertNotEquals(dto, result);
   }
 
   @Test
   void editArticleSetLead() {
     stubOneArticleSaved();
-    final String newLead =
+    final String newLeader =
       "Regeringen föreslår att det ska bli tydligare krav och skärpta " +
         "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
         "Bland annat handlar det om en noggrannare kontroll av huvudmännen.";
-    dto.setLead(newLead);
-    HeadlineComponent mc = new HeadlineComponent(dto.getHeadline(), newLead);
+    HeadlineComponent mc = new HeadlineComponent();
+    mc.setHeadline(dto.getHeadline());
+    mc.setLeader(newLeader);
+    assertNotEquals(mc, article.getHeadline());
+    dto.setLeader(newLeader);
     final String formattedNewLead = "" +
       "Regeringen föreslår att det" + NL +
       "ska bli tydligare krav och" + NL +
@@ -154,8 +157,8 @@ public class ArticleServiceTest {
     assertEquals(mc.hashCode(), article.getHeadline().hashCode());
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
-    assertEquals(formattedNewLead, result.getLead());
-    assertNotEquals(dto.getLead(), result.getLead());
+    assertEquals(formattedNewLead, result.getLeader());
+    assertNotEquals(dto.getLeader(), result.getLeader());
   }
 
   @Test
