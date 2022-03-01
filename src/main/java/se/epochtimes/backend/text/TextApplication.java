@@ -21,7 +21,8 @@ public class TextApplication {
   public CorsFilter corsFilter() {
     CorsConfiguration corsConfiguration = new CorsConfiguration();
     corsConfiguration.setAllowCredentials(true);
-    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+    corsConfiguration.setAllowedOrigins(
+      List.of("http://localhost:3000", "http://localhost:8282"));
     corsConfiguration.setAllowedHeaders(
       Arrays.asList(
         "Origin",

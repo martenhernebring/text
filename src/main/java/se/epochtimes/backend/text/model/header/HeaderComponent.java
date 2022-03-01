@@ -23,11 +23,11 @@ public class HeaderComponent implements Serializable {
   public HeaderComponent() {}
 
   public HeaderComponent(Subject subject,
-                         int year,
+                         int pubYear,
                          String vignette,
                          String articleId) {
     setSubject(subject);
-    setPubYear(year);
+    setPubYear(pubYear);
     setVignette(vignette);
     setArticleId(articleId);
   }
