@@ -137,6 +137,16 @@ public class ArticleControllerTest {
   }
 
   @Test
+  void getOneNonExistingIsNotLegal() throws Exception {
+    when(mockedService.getByHeader(any(HeaderComponent.class)))
+      .thenThrow(new ArticleNotFoundException("Not found"));
+    mockMvc.perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
+        + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
+      ).andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
+      .andReturn();
+  }
+
+  @Test
   void changeHeadline() throws Exception {
     final String newHeadline = "newHeadline!";
     dto.setHeadline(newHeadline);

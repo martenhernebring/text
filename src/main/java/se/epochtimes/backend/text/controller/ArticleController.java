@@ -85,7 +85,9 @@ public class ArticleController {
       description = "Successfully retrieved the article.",
       content = @Content(mediaType = "application/json",
         schema = @Schema(implementation = ArticleDTO.class))),
-  })
+    @ApiResponse(responseCode = "404",
+      description = "The resource is not found",
+      content = @Content)})
   @RequestMapping(value = "/inrikes/2022/ekonomi/{articleId}", method = RequestMethod.GET)
   public ArticleDTO getArticleByHeader(@PathVariable String articleId) {
     return articleService.getByHeader(

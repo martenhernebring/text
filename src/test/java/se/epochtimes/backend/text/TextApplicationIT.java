@@ -9,8 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TextApplicationIT {
 
   @Test
-  @Disabled
   void main() {
-    TextApplication.main(new String[] {});
+    TextApplication.main(new String[0]);
   }
 }

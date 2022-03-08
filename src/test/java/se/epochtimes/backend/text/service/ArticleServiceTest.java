@@ -174,18 +174,23 @@ public class ArticleServiceTest {
   }
 
   @Test
-  void emptyHeadlineShouldNotChange() {
+  void emptyHeadlineAndLeaderShouldNotChange() {
     final String oldHeadline = "headline" + NL;
+    final String oldLeader = "leader" + NL;
     var hc = article.getHC();
     hc.setHeadline(oldHeadline);
+    hc.setLeader(oldLeader);
     article.setHC(hc);
     stubOneArticleSaved();
-    final String newHeadline = "";
-    dto.setHeadline(newHeadline);
+    final String empty = "";
+    dto.setHeadline(empty);
+    dto.setLeader(empty);
     when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
     ArticleDTO result = articleServiceTest.edit(dto);
     assertEquals(oldHeadline, result.getHeadline());
+    assertEquals(oldLeader, result.getLeader());
     assertNotEquals(dto.getHeadline(), article.getHC().getHeadline());
+    assertNotEquals(dto.getLeader(), article.getHC().getLeader());
   }
 
   @Test
