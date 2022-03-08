@@ -44,7 +44,6 @@ public class ArticleService {
     hc.setHeadline(articleDTO.getHeadline().isEmpty() ?
       article.getHC().getHeadline() : articleDTO.getHeadline());
     hc.setLeader(articleDTO.getLeader().isEmpty() ?
-      //TODO uncovered line below
       article.getHC().getLeader() : articleDTO.getLeader());
     article.setHC(hc);
     if(!articleDTO.getSupport().isEmpty()) {

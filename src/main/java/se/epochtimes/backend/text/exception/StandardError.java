@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import java.io.Serializable;
 
 @ControllerAdvice
+@SuppressWarnings("unused")
 public class StandardError implements Serializable {
 
   private Integer status;

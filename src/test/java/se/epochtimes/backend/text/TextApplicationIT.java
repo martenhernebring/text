@@ -1,11 +1,9 @@
 package se.epochtimes.backend.text;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true")
 class TextApplicationIT {
 
   @Test
