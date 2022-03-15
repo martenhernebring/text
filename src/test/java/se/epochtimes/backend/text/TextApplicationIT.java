@@ -1,5 +1,6 @@
 package se.epochtimes.backend.text;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 class TextApplicationIT {
 
   @Test
+  @Disabled
   void main() {
     TextApplication.main(new String[0]);
   }

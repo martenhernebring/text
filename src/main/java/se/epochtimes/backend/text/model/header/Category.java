@@ -1,14 +1,14 @@
 package se.epochtimes.backend.text.model.header;
 
-public enum Subject {
-  EKONOMI(0);
+public enum Category {
+  INRIKES(0);
 
   private final String print;
   private final int code;
 
-  Subject(int code) {
+  Category(int code) {
     this.code = code;
-    this.print = "EKONOMI";
+    this.print = "INRIKES";
   }
 
   public String getPrint() {
@@ -17,8 +17,8 @@ public enum Subject {
   public int getCode() {
     return code;
   }
-  public static Subject valueOf(int code) {
-    for (Subject value : Subject.values()) {
+  public static Category valueOf(int code) {
+    for (Category value : Category.values()) {
       if (value.getCode() == code) {
         return value;
       }

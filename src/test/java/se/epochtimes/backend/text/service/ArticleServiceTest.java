@@ -11,7 +11,7 @@ import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
 import se.epochtimes.backend.text.model.Article;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.header.Subject;
+import se.epochtimes.backend.text.model.header.Category;
 import se.epochtimes.backend.text.model.headline.HeadlineComponent;
 import se.epochtimes.backend.text.model.wrap.WordWrapperTest;
 import se.epochtimes.backend.text.repository.ArticleRepository;
@@ -40,7 +40,7 @@ public class ArticleServiceTest {
 
   @BeforeEach
   void setUp() {
-    header = new HeaderComponent(Subject.EKONOMI, 2022, "Vignette", "");
+    header = new HeaderComponent(Category.INRIKES, 2022, "EKONOMI", "");
     final String hl = WordWrapperTest.HEADLINE;
     final String lead = WordWrapperTest.LEAD;
     final String support = """

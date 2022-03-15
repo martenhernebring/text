@@ -18,8 +18,8 @@ import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.dto.EditDTO;
 import se.epochtimes.backend.text.exception.ArticleNotFoundException;
 import se.epochtimes.backend.text.exception.ConflictException;
+import se.epochtimes.backend.text.model.header.Category;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.header.Subject;
 import se.epochtimes.backend.text.service.ArticleService;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class ArticleControllerTest {
 
   @BeforeEach
   void setUp() {
-    hc = new HeaderComponent(Subject.EKONOMI, 2022, "Inrikes", "");
+    hc = new HeaderComponent(Category.INRIKES, 2022, "EKONOMI", "");
     dto = new ArticleDTO(hc, "headline", "lead", "   support");
   }
 
@@ -71,8 +71,8 @@ public class ArticleControllerTest {
       .getResponse()
       .getContentAsString();
 
-    String p = "\"articleId\":\"";
-    assertTrue(aRJ.substring(aRJ.indexOf(p) + p.length(),
+    String id = "\"articleId\":\"";
+    assertTrue(aRJ.substring(aRJ.indexOf(id) + id.length(),
       aRJ.indexOf("\"},\"support\":\"")).matches("[0-9]{4}"));
     assertEquals(hc, inputDTO.getHeader());
   }
@@ -126,8 +126,8 @@ public class ArticleControllerTest {
   void getOne() throws Exception {
     when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(dto);
     MvcResult mvcResult = mockMvc
-      .perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
-        + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
+      .perform(get(BASE_URL + "/" + hc.getCategory() + "/" +
+        hc.getPubYear() + "/" + hc.getVignette()  + "/" + hc.getArticleId())
       ).andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
       .andReturn();
 
@@ -137,11 +137,23 @@ public class ArticleControllerTest {
   }
 
   @Test
+  void getOneUsingDifferentYear() throws Exception {
+    hc.setPubYear(2023);
+    dto.setHeader(hc);
+    when(mockedService.getByHeader(any(HeaderComponent.class))).thenReturn(dto);
+    mockMvc
+      .perform(get(BASE_URL + "/" + hc.getCategory() + "/" +
+        hc.getPubYear() + "/" + hc.getVignette()  + "/" + hc.getArticleId())
+      ).andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+      .andReturn();
+  }
+
+  @Test
   void getOneNonExistingIsNotLegal() throws Exception {
     when(mockedService.getByHeader(any(HeaderComponent.class)))
       .thenThrow(new ArticleNotFoundException("Not found"));
-    mockMvc.perform(get(BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
-        + hc.getSubject().getPrint().toLowerCase() + "/" + hc.getArticleId())
+    mockMvc.perform(get(BASE_URL + "/" + hc.getCategory() + "/" + hc.getPubYear() +
+        "/" + hc.getVignette() + "/" + hc.getArticleId())
       ).andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
       .andReturn();
   }
@@ -154,8 +166,8 @@ public class ArticleControllerTest {
     when(mockedService.edit(any(ArticleDTO.class))).thenReturn(dto);
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.put(
-      BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
-        + hc.getSubject().getPrint().toLowerCase() + "/" + "1234")
+      BASE_URL + "/" + hc.getCategory() + "/" + hc.getPubYear()
+        + "/" + hc.getVignette() + "/" + "1234")
         .content(objectMapper.writeValueAsString(editDTO))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
@@ -177,8 +189,8 @@ public class ArticleControllerTest {
     EditDTO editDTO = new EditDTO(dto.getHeadline(), newLeader, dto.getSupport());
 
     String aRJ = this.mockMvc.perform(MockMvcRequestBuilders.put(
-          BASE_URL + "/" + hc.getVignette() + "/" + hc.getPubYear() + "/"
-            + hc.getSubject().getPrint().toLowerCase() + "/" + "1234")
+          BASE_URL + "/" + hc.getCategory() + "/" + hc.getPubYear()
+            + "/" + hc.getVignette() + "/" + "1234")
         .content(objectMapper.writeValueAsString(editDTO))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
@@ -188,6 +200,22 @@ public class ArticleControllerTest {
 
     String l = "\"leader\":\"\"}";
     assertThrows(StringIndexOutOfBoundsException.class, () -> aRJ.substring(aRJ.indexOf(l)));
+  }
+
+  @Test
+  void changeArticleUsingDifferentVignette() throws Exception {
+    when(mockedService.edit(any(ArticleDTO.class))).thenReturn(dto);
+    EditDTO editDTO = new EditDTO(dto.getHeadline(), dto.getLeader(), dto.getSupport());
+
+    this.mockMvc.perform(MockMvcRequestBuilders.put(
+          BASE_URL + "/" + hc.getCategory() + "/" +
+            hc.getPubYear() + "/" + "politik" + "/" + "1234")
+        .content(objectMapper.writeValueAsString(editDTO))
+        .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
   }
 
 }

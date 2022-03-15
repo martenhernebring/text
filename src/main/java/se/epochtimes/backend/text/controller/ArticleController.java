@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import se.epochtimes.backend.text.dto.ArticleDTO;
 import se.epochtimes.backend.text.dto.EditDTO;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
-import se.epochtimes.backend.text.model.header.Subject;
+import se.epochtimes.backend.text.model.header.Category;
 import se.epochtimes.backend.text.service.ArticleService;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class ArticleController {
     content = @Content(mediaType = "application/json",
     schema = @Schema(implementation = ArticleDTO.class))),
     @ApiResponse(responseCode = "400", description =
-        "Unquoted character ->\\ and \", New line -> \\n, Subject -> EKONOMI",
+        "Unquoted character ->\\ and \", New line -> \\n, Category -> INRIKES",
       content = @Content),
     @ApiResponse(responseCode = "409",
       description = "Headline and lead has already been posted.",
@@ -63,7 +63,7 @@ public class ArticleController {
   }
 
   /**
-   * @param header Article subject, year, vignette and id
+   * @param header Article category, year, vignette and id
    */
   @Operation(summary = "Delete an article.")
   @ApiResponses(value = {
@@ -88,11 +88,16 @@ public class ArticleController {
     @ApiResponse(responseCode = "404",
       description = "The resource is not found",
       content = @Content)})
-  @RequestMapping(value = "/inrikes/2022/ekonomi/{articleId}", method = RequestMethod.GET)
-  public ArticleDTO getArticleByHeader(@PathVariable String articleId) {
-    return articleService.getByHeader(
-      new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId)
-    );
+  @RequestMapping(value = "/{category}/{pubYear}/{vignette}/{articleId}",
+    method = RequestMethod.GET)
+  public ArticleDTO getArticleByHeader(
+      @PathVariable Category category,
+      @PathVariable int pubYear,
+      @PathVariable String vignette,
+      @PathVariable String articleId) {
+    return articleService.getByHeader(new HeaderComponent(
+        category, pubYear, vignette, articleId
+    ));
   }
 
   /**
@@ -106,13 +111,20 @@ public class ArticleController {
       content = @Content(mediaType = "application/json",
         schema = @Schema(implementation = ArticleDTO.class))),
     @ApiResponse(responseCode = "400", description =
-      "Unquoted character ->\\ and \", New line -> \\n, Subject -> EKONOMI",
+      "Unquoted character ->\\ and \", New line -> \\n, Category -> INRIKES",
       content = @Content)})
-  @RequestMapping(value = "/inrikes/2022/ekonomi/{articleId}", method = RequestMethod.PUT)
-  public ArticleDTO update(@RequestBody EditDTO editedArticle, @PathVariable String articleId) {
+  @RequestMapping(value = "/{category}/{pubYear}/{vignette}/{articleId}",
+    method = RequestMethod.PUT)
+  public ArticleDTO update(
+    @RequestBody EditDTO editedArticle,
+    @PathVariable Category category,
+    @PathVariable int pubYear,
+    @PathVariable String vignette,
+    @PathVariable String articleId
+  ) {
     return articleService.edit(new ArticleDTO(
-      new HeaderComponent(Subject.EKONOMI, 2022, "INRIKES", articleId),
-      editedArticle.headline(), editedArticle.leader(), editedArticle.support()
+        new HeaderComponent(category, pubYear, vignette, articleId),
+        editedArticle.headline(), editedArticle.leader(), editedArticle.support()
       ));
   }
 

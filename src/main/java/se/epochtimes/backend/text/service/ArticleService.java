@@ -61,7 +61,7 @@ public class ArticleService {
   private Article findByHeader(HeaderComponent header) {
     var existing = articleRepository.findByHeader(
       header.getArticleId(),
-      header.getSubject().getCode(),
+      header.getCategory().getCode(),
       header.getVignette(),
       header.getPubYear()
     );

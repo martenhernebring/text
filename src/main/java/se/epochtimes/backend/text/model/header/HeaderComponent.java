@@ -14,7 +14,7 @@ public class HeaderComponent implements Serializable {
   @Serial
   private static final long serialVersionUID = 1801063019513355240L;
 
-  private int subject;
+  private int category;
   private int pubYear;
   private String vignette;
   private String articleId;
@@ -22,11 +22,11 @@ public class HeaderComponent implements Serializable {
   //Jpa requirement
   public HeaderComponent() {}
 
-  public HeaderComponent(Subject subject,
+  public HeaderComponent(Category category,
                          int pubYear,
                          String vignette,
                          String articleId) {
-    setSubject(subject);
+    setCategory(category);
     setPubYear(pubYear);
     setVignette(vignette);
     setArticleId(articleId);
@@ -45,16 +45,16 @@ public class HeaderComponent implements Serializable {
     return vignette;
   }
 
-  public Subject getSubject() {
-    return Subject.valueOf(subject);
+  public Category getCategory() {
+    return Category.valueOf(category);
   }
 
   public String getArticleId() {
     return articleId;
   }
 
-  public void setSubject(Subject subject) {
-    this.subject = subject.getCode();
+  public void setCategory(Category category) {
+    this.category = category.getCode();
   }
 
   public void setPubYear(int pubYear) {
@@ -83,7 +83,7 @@ public class HeaderComponent implements Serializable {
 
     return new EqualsBuilder()
       .append(pubYear, that.pubYear)
-      .append(subject, that.subject)
+      .append(category, that.category)
       .append(vignette, that.vignette)
       .append(articleId, that.articleId)
       .isEquals();
@@ -92,7 +92,7 @@ public class HeaderComponent implements Serializable {
   @Override
   public int hashCode() {
     return new HashCodeBuilder(17, 37)
-      .append(subject)
+      .append(category)
       .append(pubYear)
       .append(vignette)
       .append(articleId)

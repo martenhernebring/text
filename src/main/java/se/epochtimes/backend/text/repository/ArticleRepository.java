@@ -12,13 +12,13 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Long> {
   @Query(value = "SELECT * FROM newspaperarticle na WHERE " +
     "na.article_id = ?1 AND " +
-    "na.subject = ?2 AND " +
+    "na.category = ?2 AND " +
     "na.vignette = ?3 AND " +
     "na.pub_year = ?4",
     nativeQuery = true)
   List<Article> findByHeader(
     @Param(value = "article_id") String article_id,
-    @Param(value = "subject") int subject,
+    @Param(value = "category") int category,
     @Param(value = "vignette") String vignette,
     @Param(value = "pub_year") int pub_year
   );

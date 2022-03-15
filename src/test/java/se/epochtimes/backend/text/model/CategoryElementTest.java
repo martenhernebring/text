@@ -1,20 +1,20 @@
 package se.epochtimes.backend.text.model;
 
 import org.junit.jupiter.api.Test;
-import se.epochtimes.backend.text.model.header.Subject;
+import se.epochtimes.backend.text.model.header.Category;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SubjectElementTest {
+public class CategoryElementTest {
   @Test
-  void addSubject() {
-    Subject ekonomi = Subject.EKONOMI;
+  void addCategory() {
+    Category ekonomi = Category.INRIKES;
     assertNotNull(ekonomi);
   }
 
   @Test
   void illegalShouldThrow() {
-    assertThrows(IllegalArgumentException.class, () -> Subject.valueOf(-1));
+    assertThrows(IllegalArgumentException.class, () -> Category.valueOf(-1));
   }
 }
