@@ -66,7 +66,7 @@ public class HeaderComponent implements Serializable {
   }
 
   public void setArticleId(String articleId) {
-    if(!articleId.isEmpty()) {
+    if(!articleId.isEmpty() && (Integer.parseInt(articleId) > -1)) {
       this.articleId = articleId;
     } else {
       this.articleId = generateId();
