@@ -407,6 +407,22 @@ public class WordWrapperTest {
     assertTrue(isValid(actualBody, expectedBodyNewLines, Format.PARAGRAPH));
   }
 
+  public static final String IMAGE_TEXT = "Skolminister Lina Axelsson " +
+    "Kihlblom (S) vill ha ett förbud mot religiösa friskolor.";
+
+  public static final String FORMATTED_IMAGE_TEXT = """
+      Skolminister Lina Axelsson
+      Kihlblom (S) vill ha ett förbud
+      mot religiösa friskolor.
+      """;
+
+  @Test
+  void imageText() {
+    final String actualImageText = WordWrapper.format(IMAGE_TEXT, Format.PARAGRAPH);
+    int expectedImageTextNewLines = countNewLines(FORMATTED_IMAGE_TEXT);
+    assertTrue(isValid(actualImageText, expectedImageTextNewLines, Format.PARAGRAPH));
+  }
+
   private int countNewLines(String wrappedText) {
     Matcher m = Pattern.compile("(\r\n)|(\r)|(\n)").matcher(wrappedText);
     int newLines = 0;

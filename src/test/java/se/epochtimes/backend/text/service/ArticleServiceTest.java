@@ -278,4 +278,42 @@ public class ArticleServiceTest {
       i kraft den 1 januari 2023.
       """, sr);
   }
+
+  @Test
+  void getImageTextFormatted() {
+    stubOneArticleSaved();
+    String formatted = WordWrapperTest.FORMATTED_LEAD;
+    ArticleDTO result = articleServiceTest.getByHeader(header);
+    assertEquals(result.getLeader(), formatted);
+    assertNotEquals(dto, result);
+  }
+
+  @Test
+  void editArticleSetImageText() {
+    stubOneArticleSaved();
+    final String newLeader =
+      "Regeringen föreslår att det ska bli tydligare krav och skärpta " +
+        "regler för religiösa inslag i förskolor, skolor och fritidshem. " +
+        "Bland annat handlar det om en noggrannare kontroll av huvudmännen.";
+    HeadlineComponent mc = new HeadlineComponent();
+    mc.setHeadline(dto.getHeadline());
+    mc.setLeader(newLeader);
+    assertNotEquals(mc, article.getHC());
+    dto.setLeader(newLeader);
+    final String formattedNewLead = "" +
+      "Regeringen föreslår att det" + NL +
+      "ska bli tydligare krav och" + NL +
+      "skärpta regler för religiösa" + NL +
+      "inslag i förskolor, skolor" + NL +
+      "och fritidshem. Bland annat" + NL +
+      "handlar det om en noggrannare" + NL +
+      "kontroll av huvudmännen." + NL;
+    mc.setLeader(formattedNewLead);
+    article.setHC(mc);
+    assertEquals(mc.hashCode(), article.getHC().hashCode());
+    when(mockedArticleRepository.save(any(Article.class))).thenReturn(article);
+    ArticleDTO result = articleServiceTest.edit(dto);
+    assertEquals(formattedNewLead, result.getLeader());
+    assertNotEquals(dto.getLeader(), result.getLeader());
+  }
 }

@@ -41,7 +41,7 @@ public class WordWrapper {
     this.startingSpaces = startingSpaces;
   }
 
-  private static String format(String text, Format format) {
+  public static String format(String text, Format format) {
     WordWrapper ww = new WordWrapper(text, format);
     return join(ww.wrapWordsWithLines());
   }
@@ -209,7 +209,7 @@ public class WordWrapper {
     String next = lines.get(li + 1);
     String[] w = ip.getRight().split(" ");
     int lstl = w[w.length - 1].length();
-    int proposal = next.length() + lstl;
+    int proposal = next.length() + lstl + 1;
     String lngst = ip.getRight();
     int lngstl = lngst.length();
     if(proposal <= maxLettersPerLine && proposal < lngstl) {
