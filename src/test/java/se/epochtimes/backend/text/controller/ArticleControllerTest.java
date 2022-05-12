@@ -74,7 +74,6 @@ public class ArticleControllerTest {
     String id = "\"articleId\":\"";
     assertTrue(aRJ.substring(aRJ.indexOf(id) + id.length(),
       aRJ.indexOf("\"},\"support\":\"")).matches("[0-9]{4}"));
-    assertEquals(hc, inputDTO.getHeader());
   }
 
   @Test

@@ -18,6 +18,7 @@ import se.epochtimes.backend.text.model.header.Category;
 import se.epochtimes.backend.text.model.header.HeaderComponent;
 import se.epochtimes.backend.text.service.ImageService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -45,20 +46,13 @@ public class ImageControllerTest {
       Kihlblom""", inputDto.getImageCredit());
     when(mockedService.add(any(ImageDTO.class))).thenReturn(dto);
 
-    //String aRJ =
-    this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+    int status = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
         .content(objectMapper.writeValueAsString(inputDto))
         .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
       .andReturn()
       .getResponse()
-      .getContentAsString();
-    /*
-    String id = "\"articleId\":\"";
-    assertTrue(aRJ.substring(aRJ.indexOf(id) + id.length(),
-      aRJ.indexOf("\"},\"support\":\"")).matches("[0-9]{4}"));
-    assertEquals(hc, inputDTO.getHeader());
-
-     */
+      .getStatus();
+    assertEquals(200, status);
   }
 }
