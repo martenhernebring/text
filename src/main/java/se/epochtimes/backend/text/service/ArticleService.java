@@ -22,16 +22,18 @@ public class ArticleService {
   }
 
   public ArticleDTO add(ArticleDTO dto) {
+    Article toBeSaved = new Article(dto);
+    HeadlineComponent hc = toBeSaved.getHC();
     List<Article> existing = articleRepository
-      .findByHeadline(dto.getHeadline(), dto.getLeader());
+      .findByHeadline(hc.getHeadline(), hc.getLeader());
     if(existing.size() > 0) {
       throw new ConflictException(
         "The article has already been posted. Please get by following header: "
           + existing.get(0).getHeader()
       );
     }
-    Article article = articleRepository.save(new Article(dto));
-    return new ArticleDTO(article);
+    Article saved = articleRepository.save(toBeSaved);
+    return new ArticleDTO(saved);
   }
 
   public ArticleDTO getByHeader(HeaderComponent header) {
