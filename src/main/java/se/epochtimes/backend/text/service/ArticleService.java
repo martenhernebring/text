@@ -24,12 +24,24 @@ public class ArticleService {
   public ArticleDTO add(ArticleDTO dto) {
     Article toBeSaved = new Article(dto);
     HeadlineComponent hc = toBeSaved.getHC();
-    List<Article> existing = articleRepository
+    List<Article> existingHeadline = articleRepository
       .findByHeadline(hc.getHeadline(), hc.getLeader());
-    if(existing.size() > 0) {
+    if(existingHeadline.size() > 0) {
       throw new ConflictException(
         "The article has already been posted. Please get by following header: "
-          + existing.get(0).getHeader()
+          + existingHeadline.get(0).getHeader()
+      );
+    }
+    var header = toBeSaved.getHeader();
+    var existingHeader = articleRepository.findByHeader(
+      toBeSaved.getHeader().getArticleId(),
+      header.getCategory().getCode(),
+      header.getVignette(),
+      header.getPubYear()
+    );
+    if(existingHeader.size() > 0) {
+      throw new ConflictException(
+        "The header " + header + " is already in use. Please use another header."
       );
     }
     Article saved = articleRepository.save(toBeSaved);
